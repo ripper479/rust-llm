@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Snakes and Ladders</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/210/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/433/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>You are given an <code>n x n</code> integer matrix <code>board</code> where the cells are labeled from <code>1</code> to <code>n2</code> in a <a href="https://en.wikipedia.org/wiki/Boustrophedon"><strong>Boustrophedon style</strong></a> starting from the bottom left of the board (i.e. <code>board[n - 1][0]</code>) and alternating direction each row.</p>
+<p>You start on square <code>1</code> of the board. In each move, starting from square <code>curr</code>, do the following:</p>
+<ul>
+<li>Choose a destination square <code>next</code> with a label in the range <code>[curr + 1, min(curr + 6, n2)]</code>.<ul>
+<li>This choice simulates the result of a standard <strong>6-sided die roll</strong>: i.e., there are always at most 6 destinations, regardless of the size of the board.</li>
+</ul>
+</li>
+<li>If <code>next</code> has a snake or ladder, you <strong>must</strong> move to the destination of that snake or ladder. Otherwise, you move to <code>next</code>.</li>
+<li>The game ends when you reach the square <code>n2</code>.</li>
+</ul>
+<p>A board square on row <code>r</code> and column <code>c</code> has a snake or ladder if <code>board[r][c] != -1</code>. The destination of that snake or ladder is <code>board[r][c]</code>. Squares <code>1</code> and <code>n2</code> do not have a snake or ladder.</p>
+<p>Note that you only take a snake or ladder at most once per move. If the destination to a snake or ladder is the start of another snake or ladder, you do <strong>not</strong> follow the subsequent snake or ladder.</p>
+<ul>
+<li>For example, suppose the board is <code>[[-1,4],[-1,3]]</code>, and on the first move, your destination square is <code>2</code>. You follow the ladder to square <code>3</code>, but do <strong>not</strong> follow the subsequent ladder to <code>4</code>.</li>
+</ul>
+<p>Return <em>the least number of moves required to reach the square</em> <code>n2</code><em>. If it is not possible to reach the square, return</em> <code>-1</code>.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> board = [[-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1],[-1,35,-1,-1,13,-1],[-1,-1,-1,-1,-1,-1],[-1,15,-1,-1,-1,-1]]
+<strong>Output:</strong> 4
+<strong>Explanation:</strong> 
+In the beginning, you start at square 1 (at row 5, column 0).
+You decide to move to square 2 and must take the ladder to square 15.
+You then decide to move to square 17 and must take the snake to square 13.
+You then decide to move to square 14 and must take the ladder to square 35.
+You then decide to move to square 36, ending the game.
+This is the lowest possible number of moves to reach the last square, so return 4.</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> board = [[-1,-1],[-1,3]]
+<strong>Output:</strong> 1</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>n == board.length == board[i].length</code></li>
+<li><code>2 &lt;= n &lt;= 20</code></li>
+<li><code>board[i][j]</code> is either <code>-1</code> or in the range <code>[1, n2]</code>.</li>
+<li>The squares labeled <code>1</code> and <code>n2</code> do not have any ladders or snakes.</li>
+</ul>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">pub fn snakes_and_ladders(board: Vec<Vec<i32>>) -> i32 {
+    let n = board.len();
+    let mut moves = 0;
+    let mut curr = 1;
+
+    while curr != n * n {
+        let next = if curr + 6 <= n * n {
+            curr + 6
+        } else {
+            n * n
+        };
+
+        let dest = board[curr / n][curr % n];
+        if dest != -1 {
+            curr = dest;
+        } else {
+            curr = next;
+        }
+
+        moves += 1;
+    }
+
+    moves
+}
+</code></pre>
+
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 16: Char 20: error: mismatched types (solution.rs) | 5 | let mut curr = 1; | - expected due to this value ... 16 | curr = dest; | ^^^^ expected `usize`, found `i32` For more information about this error, try `rustc --explain E0308`. error: could not compile `prog` (bin "prog") due to previous error</pre>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+impl Solution {
+    pub fn snakes_and_ladders(board: Vec<Vec<i32>>) -> i32 {
+        let n = board.len();
+        let mut moves = 0;
+        let mut current = 1;
+        let mut next = 1;
+
+        while current != n * n {
+            next = current + 1;
+            if next > n * n {
+                next = n * n;
+            }
+
+            if board[current / n][current % n] != -1 {
+                next = board[current / n][current % n];
+            }
+
+            if next == n * n {
+                return moves;
+            }
+
+            current = next;
+            moves += 1;
+        }
+
+        return -1;
+    }
+}
+</code></pre>
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 15: Char 24: error: mismatched types (solution.rs) | 6 | let mut next = 1; | - expected due to this value ... 15 | next = board[current / n][current % n]; | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `usize`, found `i32` For more information about this error, try `rustc --explain E0308`. error: could not compile `prog` (bin "prog") due to previous error</pre>
+          </div>
+          
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

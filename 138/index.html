@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Copy List with Random Pointer</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/21/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/92/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>A linked list of length <code>n</code> is given such that each node contains an additional random pointer, which could point to any node in the list, or <code>null</code>.</p>
+<p>Construct a <a href="https://en.wikipedia.org/wiki/Object_copying#Deep_copy"><strong>deep copy</strong></a> of the list. The deep copy should consist of exactly <code>n</code> <strong>brand new</strong> nodes, where each new node has its value set to the value of its corresponding original node. Both the <code>next</code> and <code>random</code> pointer of the new nodes should point to new nodes in the copied list such that the pointers in the original list and copied list represent the same list state. <strong>None of the pointers in the new list should point to nodes in the original list</strong>.</p>
+<p>For example, if there are two nodes <code>X</code> and <code>Y</code> in the original list, where <code>X.random --&gt; Y</code>, then for the corresponding two nodes <code>x</code> and <code>y</code> in the copied list, <code>x.random --&gt; y</code>.</p>
+<p>Return <em>the head of the copied linked list</em>.</p>
+<p>The linked list is represented in the input/output as a list of <code>n</code> nodes. Each node is represented as a pair of <code>[val, random_index]</code> where:</p>
+<ul>
+<li><code>val</code>: an integer representing <code>Node.val</code></li>
+<li><code>random_index</code>: the index of the node (range from <code>0</code> to <code>n-1</code>) that the <code>random</code> pointer points to, or <code>null</code> if it does not point to any node.</li>
+</ul>
+<p>Your code will <strong>only</strong> be given the <code>head</code> of the original linked list.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> head = [[7,null],[13,0],[11,4],[10,2],[1,0]]
+<strong>Output:</strong> [[7,null],[13,0],[11,4],[10,2],[1,0]]</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> head = [[1,1],[2,1]]
+<strong>Output:</strong> [[1,1],[2,1]]</p>
+<p><strong>Example 3:</strong></p>
+<p><strong>Input:</strong> head = [[3,null],[3,0],[3,null]]
+<strong>Output:</strong> [[3,null],[3,0],[3,null]]</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>0 &lt;= n &lt;= 1000</code></li>
+<li><code>-104 &lt;= Node.val &lt;= 104</code></li>
+<li><code>Node.random</code> is <code>null</code> or is pointing to some node in the linked list.</li>
+</ul>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">use std::collections::HashMap;
+
+pub struct Solution;
+
+impl Solution {
+    pub fn copy_list(head: Option<Box<Node>>) -> Option<Box<Node>> {
+        let mut map = HashMap::new();
+        let mut current = head;
+        let mut new_head = None;
+        let mut new_current = &mut new_head;
+
+        while let Some(node) = current {
+            let new_node = Box::new(Node::new(node.val));
+            map.insert(node, new_node.clone());
+            *new_current = Some(new_node);
+            new_current = &mut new_current.as_mut().unwrap().next;
+            current = node.next;
+        }
+
+        current = head;
+        new_current = &mut new_head;
+
+        while let Some(node) = current {
+            let new_node = map.get(&node).unwrap();
+            new_node.random = map.get(&node.random).cloned();
+            new_current = &mut new_current.as_mut().unwrap().next;
+            current = node.next;
+        }
+
+        new_head
+    }
+}
+
+pub struct Node {
+    val: i32,
+    next: Option<Box<Node>>,
+    random: Option<Box<Node>>,
+}
+
+impl Node {
+    pub fn new(val: i32) -> Self {
+        Node {
+            val,
+            next: None,
+            random: None,
+        }
+    }
+}
+</code></pre>
+
+          
+          <div class="alert alert-info" role="alert">
+            <strong>stdout</strong>
+            <pre>No Rust Compiler</pre>
+          </div>
+           
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+use std::collections::HashMap;
+
+struct Node {
+    val: i32,
+    next: Option<Box<Node>>,
+    random: Option<Box<Node>>,
+}
+
+impl Node {
+    fn new(val: i32) -> Self {
+        Self {
+            val,
+            next: None,
+            random: None,
+        }
+    }
+}
+
+fn copy_random_list(head: Option<Box<Node>>) -> Option<Box<Node>> {
+    if head.is_none() {
+        return None;
+    }
+
+    let mut map = HashMap::new();
+    let mut current = head;
+    while let Some(node) = current {
+        map.insert(node.val, node.clone());
+        current = node.next;
+    }
+
+    let mut current = head;
+    while let Some(node) = current {
+        let mut new_node = Node::new(node.val);
+        new_node.next = map.get(&node.next.unwrap().val).cloned();
+        new_node.random = map.get(&node.random.unwrap().val).cloned();
+        current = new_node.next;
+    }
+
+    head
+}
+</code></pre>
+          
+          <div class="alert alert-info" role="alert">
+            <strong>stdout</strong>
+            <pre>No Rust Compiler</pre>
+          </div>
+           
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

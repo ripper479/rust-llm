@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Spiral Matrix</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/36/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/48/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>Given an <code>m x n</code> <code>matrix</code>, return <em>all elements of the</em> <code>matrix</code> <em>in spiral order</em>.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> matrix = [[1,2,3],[4,5,6],[7,8,9]]
+<strong>Output:</strong> [1,2,3,6,9,8,7,4,5]</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+<strong>Output:</strong> [1,2,3,4,8,12,11,10,9,5,6,7]</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>m == matrix.length</code></li>
+<li><code>n == matrix[i].length</code></li>
+<li><code>1 &lt;= m, n &lt;= 10</code></li>
+<li><code>-100 &lt;= matrix[i][j] &lt;= 100</code></li>
+</ul>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-success"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ✅
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ⚠️
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">pub fn spiral_order(matrix: Vec<Vec<i32>>) -> Vec<i32> {
+    let m = matrix.len();
+    let n = matrix[0].len();
+    let mut result = Vec::new();
+    let mut top = 0;
+    let mut bottom = m - 1;
+    let mut left = 0;
+    let mut right = n - 1;
+
+    while top <= bottom && left <= right {
+        for i in left..=right {
+            result.push(matrix[top][i]);
+        }
+        top += 1;
+
+        for i in top..=bottom {
+            result.push(matrix[i][right]);
+        }
+        right -= 1;
+
+        if top <= bottom {
+            for i in (left..=right).rev() {
+                result.push(matrix[bottom][i]);
+            }
+            bottom -= 1;
+        }
+
+        if left <= right {
+            for i in (top..=bottom).rev() {
+                result.push(matrix[i][left]);
+            }
+            left += 1;
+        }
+    }
+
+    result
+}
+</code></pre>
+
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 24: Char 43: index out of bounds: the len is 1 but the index is 18446744073709551615 (solution.rs)</pre>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-success"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ✅
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ⚠️
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+impl Solution {
+    pub fn spiral_order(matrix: Vec<Vec<i32>>) -> Vec<i32> {
+        let mut result = Vec::new();
+        let mut top = 0;
+        let mut bottom = matrix.len() - 1;
+        let mut left = 0;
+        let mut right = matrix[0].len() - 1;
+
+        while top <= bottom && left <= right {
+            for i in left..=right {
+                result.push(matrix[top][i]);
+            }
+            top += 1;
+
+            for i in top..=bottom {
+                result.push(matrix[i][right]);
+            }
+            right -= 1;
+
+            if top <= bottom {
+                for i in (left..=right).rev() {
+                    result.push(matrix[bottom][i]);
+                }
+                bottom -= 1;
+            }
+
+            if left <= right {
+                for i in (top..=bottom).rev() {
+                    result.push(matrix[i][left]);
+                }
+                left += 1;
+            }
+        }
+
+        result
+    }
+}
+</code></pre>
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 22: Char 47: index out of bounds: the len is 1 but the index is 18446744073709551615 (solution.rs)</pre>
+          </div>
+          
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

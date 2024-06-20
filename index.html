@@ -1,0 +1,3224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col text-center mx-3 mt-3">
+      <h1 class="h4">Fine-tuning CodeLlama-7b-Instruct for Rust Code Generation using PEFT</h1>
+      <p class="font-emoji"><b> ❌ -> Not Compiled / Wrong Answer &emsp; ✅ -> Compiled / Correct Answer &emsp; ⚠️ -> Runtime Error &emsp;
+       ⏳ -> Time Limit Exceeded</b></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col table-responsive">
+      <table class="table table-striped table-sm">
+        <col />
+        <colgroup span="3"></colgroup>
+        <colgroup span="3"></colgroup>
+        <tr>
+          <td colspan="2"></td>
+          <th colspan="3" scope="colgroup">Rust LLM</th>
+          <th colspan="3" scope="colgroup">CodeLlama-7B</th>
+        </tr>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th>Compiled</th>
+          <th>Verdict</th>
+          <th>Compiled</th>
+          <th>Verdict</th>
+        </tr>
+        <tbody class="table-group-divider">
+          
+          <tr>
+            <td>88</td>
+            <td>
+              <a href="/rust-llm/88/">
+                Merge Sorted Array
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>27</td>
+            <td>
+              <a href="/rust-llm/27/">
+                Remove Element
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>26</td>
+            <td>
+              <a href="/rust-llm/26/">
+                Remove Duplicates from Sorted Array
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>80</td>
+            <td>
+              <a href="/rust-llm/80/">
+                Remove Duplicates from Sorted Array II
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>169</td>
+            <td>
+              <a href="/rust-llm/169/">
+                Majority Element
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>189</td>
+            <td>
+              <a href="/rust-llm/189/">
+                Rotate Array
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>121</td>
+            <td>
+              <a href="/rust-llm/121/">
+                Best Time to Buy and Sell Stock
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>122</td>
+            <td>
+              <a href="/rust-llm/122/">
+                Best Time to Buy and Sell Stock II
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>55</td>
+            <td>
+              <a href="/rust-llm/55/">
+                Jump Game
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>45</td>
+            <td>
+              <a href="/rust-llm/45/">
+                Jump Game II
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>274</td>
+            <td>
+              <a href="/rust-llm/274/">
+                H-Index
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>380</td>
+            <td>
+              <a href="/rust-llm/380/">
+                Insert Delete GetRandom O(1)
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>238</td>
+            <td>
+              <a href="/rust-llm/238/">
+                Product of Array Except Self
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>134</td>
+            <td>
+              <a href="/rust-llm/134/">
+                Gas Station
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>135</td>
+            <td>
+              <a href="/rust-llm/135/">
+                Candy
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⚠️
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>42</td>
+            <td>
+              <a href="/rust-llm/42/">
+                Trapping Rain Water
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>13</td>
+            <td>
+              <a href="/rust-llm/13/">
+                Roman to Integer
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>12</td>
+            <td>
+              <a href="/rust-llm/12/">
+                Integer to Roman
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>58</td>
+            <td>
+              <a href="/rust-llm/58/">
+                Length of Last Word
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>14</td>
+            <td>
+              <a href="/rust-llm/14/">
+                Longest Common Prefix
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>151</td>
+            <td>
+              <a href="/rust-llm/151/">
+                Reverse Words in a String
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>6</td>
+            <td>
+              <a href="/rust-llm/6/">
+                Zigzag Conversion
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>28</td>
+            <td>
+              <a href="/rust-llm/28/">
+                Find the Index of the First Occurrence in a String
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>68</td>
+            <td>
+              <a href="/rust-llm/68/">
+                Text Justification
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>125</td>
+            <td>
+              <a href="/rust-llm/125/">
+                Valid Palindrome
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>392</td>
+            <td>
+              <a href="/rust-llm/392/">
+                Is Subsequence
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>167</td>
+            <td>
+              <a href="/rust-llm/167/">
+                Two Sum II - Input Array Is Sorted
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>11</td>
+            <td>
+              <a href="/rust-llm/11/">
+                Container With Most Water
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>15</td>
+            <td>
+              <a href="/rust-llm/15/">
+                3Sum
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>209</td>
+            <td>
+              <a href="/rust-llm/209/">
+                Minimum Size Subarray Sum
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>3</td>
+            <td>
+              <a href="/rust-llm/3/">
+                Longest Substring Without Repeating Characters
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>30</td>
+            <td>
+              <a href="/rust-llm/30/">
+                Substring with Concatenation of All Words
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>76</td>
+            <td>
+              <a href="/rust-llm/76/">
+                Minimum Window Substring
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>36</td>
+            <td>
+              <a href="/rust-llm/36/">
+                Valid Sudoku
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>54</td>
+            <td>
+              <a href="/rust-llm/54/">
+                Spiral Matrix
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⚠️
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⚠️
+            </td>
+          </tr>
+          
+          <tr>
+            <td>48</td>
+            <td>
+              <a href="/rust-llm/48/">
+                Rotate Image
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>73</td>
+            <td>
+              <a href="/rust-llm/73/">
+                Set Matrix Zeroes
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>289</td>
+            <td>
+              <a href="/rust-llm/289/">
+                Game of Life
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>383</td>
+            <td>
+              <a href="/rust-llm/383/">
+                Ransom Note
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>205</td>
+            <td>
+              <a href="/rust-llm/205/">
+                Isomorphic Strings
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>290</td>
+            <td>
+              <a href="/rust-llm/290/">
+                Word Pattern
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>242</td>
+            <td>
+              <a href="/rust-llm/242/">
+                Valid Anagram
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>49</td>
+            <td>
+              <a href="/rust-llm/49/">
+                Group Anagrams
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>1</td>
+            <td>
+              <a href="/rust-llm/1/">
+                Two Sum
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>202</td>
+            <td>
+              <a href="/rust-llm/202/">
+                Happy Number
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>219</td>
+            <td>
+              <a href="/rust-llm/219/">
+                Contains Duplicate II
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>128</td>
+            <td>
+              <a href="/rust-llm/128/">
+                Longest Consecutive Sequence
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>228</td>
+            <td>
+              <a href="/rust-llm/228/">
+                Summary Ranges
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⚠️
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>56</td>
+            <td>
+              <a href="/rust-llm/56/">
+                Merge Intervals
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>57</td>
+            <td>
+              <a href="/rust-llm/57/">
+                Insert Interval
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>452</td>
+            <td>
+              <a href="/rust-llm/452/">
+                Minimum Number of Arrows to Burst Balloons
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>20</td>
+            <td>
+              <a href="/rust-llm/20/">
+                Valid Parentheses
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>71</td>
+            <td>
+              <a href="/rust-llm/71/">
+                Simplify Path
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>155</td>
+            <td>
+              <a href="/rust-llm/155/">
+                Min Stack
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>150</td>
+            <td>
+              <a href="/rust-llm/150/">
+                Evaluate Reverse Polish Notation
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>224</td>
+            <td>
+              <a href="/rust-llm/224/">
+                Basic Calculator
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>141</td>
+            <td>
+              <a href="/rust-llm/141/">
+                Linked List Cycle
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>2</td>
+            <td>
+              <a href="/rust-llm/2/">
+                Add Two Numbers
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>21</td>
+            <td>
+              <a href="/rust-llm/21/">
+                Merge Two Sorted Lists
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>138</td>
+            <td>
+              <a href="/rust-llm/138/">
+                Copy List with Random Pointer
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>92</td>
+            <td>
+              <a href="/rust-llm/92/">
+                Reverse Linked List II
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>25</td>
+            <td>
+              <a href="/rust-llm/25/">
+                Reverse Nodes in k-Group
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>19</td>
+            <td>
+              <a href="/rust-llm/19/">
+                Remove Nth Node From End of List
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>82</td>
+            <td>
+              <a href="/rust-llm/82/">
+                Remove Duplicates from Sorted List II
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>61</td>
+            <td>
+              <a href="/rust-llm/61/">
+                Rotate List
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>86</td>
+            <td>
+              <a href="/rust-llm/86/">
+                Partition List
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>146</td>
+            <td>
+              <a href="/rust-llm/146/">
+                LRU Cache
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>104</td>
+            <td>
+              <a href="/rust-llm/104/">
+                Maximum Depth of Binary Tree
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>100</td>
+            <td>
+              <a href="/rust-llm/100/">
+                Same Tree
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>226</td>
+            <td>
+              <a href="/rust-llm/226/">
+                Invert Binary Tree
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>101</td>
+            <td>
+              <a href="/rust-llm/101/">
+                Symmetric Tree
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>105</td>
+            <td>
+              <a href="/rust-llm/105/">
+                Construct Binary Tree from Preorder and Inorder Traversal
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>106</td>
+            <td>
+              <a href="/rust-llm/106/">
+                Construct Binary Tree from Inorder and Postorder Traversal
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⚠️
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>117</td>
+            <td>
+              <a href="/rust-llm/117/">
+                Populating Next Right Pointers in Each Node II
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>114</td>
+            <td>
+              <a href="/rust-llm/114/">
+                Flatten Binary Tree to Linked List
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>112</td>
+            <td>
+              <a href="/rust-llm/112/">
+                Path Sum
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>129</td>
+            <td>
+              <a href="/rust-llm/129/">
+                Sum Root to Leaf Numbers
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>124</td>
+            <td>
+              <a href="/rust-llm/124/">
+                Binary Tree Maximum Path Sum
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>173</td>
+            <td>
+              <a href="/rust-llm/173/">
+                Binary Search Tree Iterator
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>222</td>
+            <td>
+              <a href="/rust-llm/222/">
+                Count Complete Tree Nodes
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>236</td>
+            <td>
+              <a href="/rust-llm/236/">
+                Lowest Common Ancestor of a Binary Tree
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>199</td>
+            <td>
+              <a href="/rust-llm/199/">
+                Binary Tree Right Side View
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>637</td>
+            <td>
+              <a href="/rust-llm/637/">
+                Average of Levels in Binary Tree
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>102</td>
+            <td>
+              <a href="/rust-llm/102/">
+                Binary Tree Level Order Traversal
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>103</td>
+            <td>
+              <a href="/rust-llm/103/">
+                Binary Tree Zigzag Level Order Traversal
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>530</td>
+            <td>
+              <a href="/rust-llm/530/">
+                Minimum Absolute Difference in BST
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>230</td>
+            <td>
+              <a href="/rust-llm/230/">
+                Kth Smallest Element in a BST
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>98</td>
+            <td>
+              <a href="/rust-llm/98/">
+                Validate Binary Search Tree
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>200</td>
+            <td>
+              <a href="/rust-llm/200/">
+                Number of Islands
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>130</td>
+            <td>
+              <a href="/rust-llm/130/">
+                Surrounded Regions
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>133</td>
+            <td>
+              <a href="/rust-llm/133/">
+                Clone Graph
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>399</td>
+            <td>
+              <a href="/rust-llm/399/">
+                Evaluate Division
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>207</td>
+            <td>
+              <a href="/rust-llm/207/">
+                Course Schedule
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>210</td>
+            <td>
+              <a href="/rust-llm/210/">
+                Course Schedule II
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>909</td>
+            <td>
+              <a href="/rust-llm/909/">
+                Snakes and Ladders
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>433</td>
+            <td>
+              <a href="/rust-llm/433/">
+                Minimum Genetic Mutation
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>127</td>
+            <td>
+              <a href="/rust-llm/127/">
+                Word Ladder
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>208</td>
+            <td>
+              <a href="/rust-llm/208/">
+                Implement Trie (Prefix Tree)
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>211</td>
+            <td>
+              <a href="/rust-llm/211/">
+                Design Add and Search Words Data Structure
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>212</td>
+            <td>
+              <a href="/rust-llm/212/">
+                Word Search II
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>17</td>
+            <td>
+              <a href="/rust-llm/17/">
+                Letter Combinations of a Phone Number
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>77</td>
+            <td>
+              <a href="/rust-llm/77/">
+                Combinations
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>46</td>
+            <td>
+              <a href="/rust-llm/46/">
+                Permutations
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>39</td>
+            <td>
+              <a href="/rust-llm/39/">
+                Combination Sum
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>52</td>
+            <td>
+              <a href="/rust-llm/52/">
+                N-Queens II
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>22</td>
+            <td>
+              <a href="/rust-llm/22/">
+                Generate Parentheses
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>79</td>
+            <td>
+              <a href="/rust-llm/79/">
+                Word Search
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>108</td>
+            <td>
+              <a href="/rust-llm/108/">
+                Convert Sorted Array to Binary Search Tree
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>148</td>
+            <td>
+              <a href="/rust-llm/148/">
+                Sort List
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>427</td>
+            <td>
+              <a href="/rust-llm/427/">
+                Construct Quad Tree
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>23</td>
+            <td>
+              <a href="/rust-llm/23/">
+                Merge k Sorted Lists
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>53</td>
+            <td>
+              <a href="/rust-llm/53/">
+                Maximum Subarray
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>918</td>
+            <td>
+              <a href="/rust-llm/918/">
+                Maximum Sum Circular Subarray
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>35</td>
+            <td>
+              <a href="/rust-llm/35/">
+                Search Insert Position
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⚠️
+            </td>
+          </tr>
+          
+          <tr>
+            <td>74</td>
+            <td>
+              <a href="/rust-llm/74/">
+                Search a 2D Matrix
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⚠️
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⚠️
+            </td>
+          </tr>
+          
+          <tr>
+            <td>162</td>
+            <td>
+              <a href="/rust-llm/162/">
+                Find Peak Element
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>33</td>
+            <td>
+              <a href="/rust-llm/33/">
+                Search in Rotated Sorted Array
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⚠️
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⚠️
+            </td>
+          </tr>
+          
+          <tr>
+            <td>34</td>
+            <td>
+              <a href="/rust-llm/34/">
+                Find First and Last Position of Element in Sorted Array
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⚠️
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⚠️
+            </td>
+          </tr>
+          
+          <tr>
+            <td>153</td>
+            <td>
+              <a href="/rust-llm/153/">
+                Find Minimum in Rotated Sorted Array
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>4</td>
+            <td>
+              <a href="/rust-llm/4/">
+                Median of Two Sorted Arrays
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>215</td>
+            <td>
+              <a href="/rust-llm/215/">
+                Kth Largest Element in an Array
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>502</td>
+            <td>
+              <a href="/rust-llm/502/">
+                IPO
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⚠️
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>373</td>
+            <td>
+              <a href="/rust-llm/373/">
+                Find K Pairs with Smallest Sums
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>295</td>
+            <td>
+              <a href="/rust-llm/295/">
+                Find Median from Data Stream
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>67</td>
+            <td>
+              <a href="/rust-llm/67/">
+                Add Binary
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⚠️
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>190</td>
+            <td>
+              <a href="/rust-llm/190/">
+                Reverse Bits
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>191</td>
+            <td>
+              <a href="/rust-llm/191/">
+                Number of 1 Bits
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>136</td>
+            <td>
+              <a href="/rust-llm/136/">
+                Single Number
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>137</td>
+            <td>
+              <a href="/rust-llm/137/">
+                Single Number II
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>201</td>
+            <td>
+              <a href="/rust-llm/201/">
+                Bitwise AND of Numbers Range
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⏳
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⏳
+            </td>
+          </tr>
+          
+          <tr>
+            <td>9</td>
+            <td>
+              <a href="/rust-llm/9/">
+                Palindrome Number
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>66</td>
+            <td>
+              <a href="/rust-llm/66/">
+                Plus One
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>172</td>
+            <td>
+              <a href="/rust-llm/172/">
+                Factorial Trailing Zeroes
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⏳
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>69</td>
+            <td>
+              <a href="/rust-llm/69/">
+                Sqrt(x)
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>50</td>
+            <td>
+              <a href="/rust-llm/50/">
+                Pow(x, n)
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⚠️
+            </td>
+          </tr>
+          
+          <tr>
+            <td>149</td>
+            <td>
+              <a href="/rust-llm/149/">
+                Max Points on a Line
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>70</td>
+            <td>
+              <a href="/rust-llm/70/">
+                Climbing Stairs
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⏳
+            </td>
+          </tr>
+          
+          <tr>
+            <td>198</td>
+            <td>
+              <a href="/rust-llm/198/">
+                House Robber
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>139</td>
+            <td>
+              <a href="/rust-llm/139/">
+                Word Break
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⚠️
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>322</td>
+            <td>
+              <a href="/rust-llm/322/">
+                Coin Change
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>300</td>
+            <td>
+              <a href="/rust-llm/300/">
+                Longest Increasing Subsequence
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>120</td>
+            <td>
+              <a href="/rust-llm/120/">
+                Triangle
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⚠️
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>64</td>
+            <td>
+              <a href="/rust-llm/64/">
+                Minimum Path Sum
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>63</td>
+            <td>
+              <a href="/rust-llm/63/">
+                Unique Paths II
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ⚠️
+            </td>
+          </tr>
+          
+          <tr>
+            <td>5</td>
+            <td>
+              <a href="/rust-llm/5/">
+                Longest Palindromic Substring
+              </a>
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>97</td>
+            <td>
+              <a href="/rust-llm/97/">
+                Interleaving String
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>72</td>
+            <td>
+              <a href="/rust-llm/72/">
+                Edit Distance
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+          </tr>
+          
+          <tr>
+            <td>123</td>
+            <td>
+              <a href="/rust-llm/123/">
+                Best Time to Buy and Sell Stock III
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>188</td>
+            <td>
+              <a href="/rust-llm/188/">
+                Best Time to Buy and Sell Stock IV
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+          <tr>
+            <td>221</td>
+            <td>
+              <a href="/rust-llm/221/">
+                Maximal Square
+              </a>
+            </td>
+            <td class="font-emoji">
+              ✅
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+            <td class="font-emoji">
+              ❌
+            </td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<style>
+  .font-emoji {
+    font-family: emoji;
+  }
+</style>
+
+
+  </body>
+</html>

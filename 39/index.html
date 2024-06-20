@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Combination Sum</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/46/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/52/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>Given an array of <strong>distinct</strong> integers <code>candidates</code> and a target integer <code>target</code>, return <em>a list of all <strong>unique combinations</strong> of</em> <code>candidates</code> <em>where the chosen numbers sum to</em> <code>target</code><em>.</em> You may return the combinations in <strong>any order</strong>.</p>
+<p>The <strong>same</strong> number may be chosen from <code>candidates</code> an <strong>unlimited number of times</strong>. Two combinations are unique if the frequency of at least one of the chosen numbers is different.</p>
+<p>The test cases are generated such that the number of unique combinations that sum up to <code>target</code> is less than <code>150</code> combinations for the given input.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> candidates = [2,3,6,7], target = 7
+<strong>Output:</strong> [[2,2,3],[7]]
+<strong>Explanation:</strong>
+2 and 3 are candidates, and 2 + 2 + 3 = 7. Note that 2 can be used multiple times.
+7 is a candidate, and 7 = 7.
+These are the only two combinations.</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> candidates = [2,3,5], target = 8
+<strong>Output:</strong> [[2,2,2,2],[2,3,3],[3,5]]</p>
+<p><strong>Example 3:</strong></p>
+<p><strong>Input:</strong> candidates = [2], target = 1
+<strong>Output:</strong> []</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>1 &lt;= candidates.length &lt;= 30</code></li>
+<li><code>2 &lt;= candidates[i] &lt;= 40</code></li>
+<li>All elements of <code>candidates</code> are <strong>distinct</strong>.</li>
+<li><code>1 &lt;= target &lt;= 40</code></li>
+</ul>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-success"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ✅
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">pub fn combination_sum(candidates: Vec<i32>, target: i32) -> Vec<Vec<i32>> {
+    let mut result = Vec::new();
+    let mut current = Vec::new();
+    let mut candidates = candidates;
+    candidates.sort();
+    let mut i = 0;
+    while i < candidates.len() {
+        let candidate = candidates[i];
+        if candidate <= target {
+            current.push(candidate);
+            let mut j = i + 1;
+            while j < candidates.len() && candidates[j] == candidate {
+                j += 1;
+            }
+            let mut sub_result = combination_sum(candidates[i + 1..j].to_vec(), target - candidate);
+            for mut sub_combination in sub_result {
+                sub_combination.insert(0, candidate);
+                result.push(sub_combination);
+            }
+            i = j;
+        } else {
+            i += 1;
+        }
+    }
+    result
+}
+</code></pre>
+
+          
+          <div class="alert alert-info" role="alert">
+            <strong>stdout</strong>
+            <pre>Wrong Answer</pre>
+          </div>
+           
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-success"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ✅
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+impl Solution {
+    pub fn combination_sum(candidates: Vec<i32>, target: i32) -> Vec<Vec<i32>> {
+        let mut combinations = Vec::new();
+        let mut current_combination = Vec::new();
+        let mut current_sum = 0;
+
+        for &candidate in candidates.iter() {
+            current_combination.push(candidate);
+            current_sum += candidate;
+
+            if current_sum == target {
+                combinations.push(current_combination.clone());
+            } else if current_sum > target {
+                current_combination.pop();
+                current_sum -= candidate;
+            }
+        }
+
+        combinations
+    }
+}
+</code></pre>
+          
+          <div class="alert alert-info" role="alert">
+            <strong>stdout</strong>
+            <pre>Wrong Answer</pre>
+          </div>
+           
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

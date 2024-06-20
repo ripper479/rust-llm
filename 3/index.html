@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Longest Substring Without Repeating Characters</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/209/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/30/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>Given a string <code>s</code>, find the length of the <strong>longest</strong> <strong>substring</strong> without repeating characters.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> s =  "abcabcbb "
+<strong>Output:</strong> 3
+<strong>Explanation:</strong> The answer is  "abc ", with the length of 3.</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> s =  "bbbbb "
+<strong>Output:</strong> 1
+<strong>Explanation:</strong> The answer is  "b ", with the length of 1.</p>
+<p><strong>Example 3:</strong></p>
+<p><strong>Input:</strong> s =  "pwwkew "
+<strong>Output:</strong> 3
+<strong>Explanation:</strong> The answer is  "wke ", with the length of 3.
+Notice that the answer must be a substring,  "pwke " is a subsequence and not a substring.</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>0 &lt;= s.length &lt;= 5 * 104</code></li>
+<li><code>s</code> consists of English letters, digits, symbols and spaces.</li>
+</ul>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-success"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ✅
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-success"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ✅
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">pub fn length_of_longest_substring(s: String) -> i32 {
+    let mut start = 0;
+    let mut max_len = 0;
+    let mut char_map = std::collections::HashMap::new();
+
+    for (i, c) in s.chars().enumerate() {
+        if let Some(prev_i) = char_map.insert(c, i) {
+            start = std::cmp::max(start, prev_i + 1);
+        }
+        max_len = std::cmp::max(max_len, i - start + 1);
+    }
+
+    max_len as i32
+}
+</code></pre>
+
+          
+          <div class="alert alert-info" role="alert">
+            <strong>stdout</strong>
+            <pre>Accepted</pre>
+          </div>
+           
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+impl Solution {
+    pub fn length_of_longest_substring(s: String) -> i32 {
+        let mut longest_substring = 0;
+        let mut start = 0;
+        let mut end = 0;
+
+        while end < s.len() {
+            let current_char = s[end];
+            if !s[start..end].contains(current_char) {
+                longest_substring = std::cmp::max(longest_substring, end - start + 1);
+                start = end;
+            }
+            end += 1;
+        }
+
+        longest_substring
+    }
+}
+</code></pre>
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 8: Char 32: error: the type `std::string::String` cannot be indexed by `usize` (solution.rs) | 8 | let current_char = s[end]; | ^^^^^^ `std::string::String` cannot be indexed by `usize` | = help: the trait `std::ops::Index<usize>` is not implemented for `std::string::String` = help: the following other types implement trait `std::ops::Index<Idx>`: <std::string::String as std::ops::Index<RangeFull>> <std::string::String as std::ops::Index<std::ops::Range<usize>>> <std::string::String as std::ops::Index<RangeFrom<usize>>> <std::string::String as std::ops::Index<RangeTo<usize>>> <std::string::String as std::ops::Index<RangeInclusive<usize>>> <std::string::String as std::ops::Index<RangeToInclusive<usize>>> Line 16: Char 9: error: mismatched types (solution.rs) | 2 | pub fn length_of_longest_substring(s: String) -> i32 { | --- expected `i32` because of return type ... 16 | longest_substring | ^^^^^^^^^^^^^^^^^ expected `i32`, found `usize` | help: you can convert a `usize` to an `i32` and panic if the converted value doesn't fit | 16 | longest_substring.try_into().unwrap() | ++++++++++++++++++++ Some errors have detailed explanations: E0277, E0308. For more information about an error, try `rustc --explain E0277`. error: could not compile `prog` (bin "prog") due to 2 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

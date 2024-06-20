@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Game of Life</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/73/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/383/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>According to <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Wikipedia's article</a>: "The <strong>Game of Life</strong>, also known simply as <strong>Life</strong>, is a cellular automaton devised by the British mathematician John Horton Conway in 1970. "</p>
+<p>The board is made up of an <code>m x n</code> grid of cells, where each cell has an initial state: <strong>live</strong> (represented by a <code>1</code>) or <strong>dead</strong> (represented by a <code>0</code>). Each cell interacts with its <a href="https://en.wikipedia.org/wiki/Moore_neighborhood">eight neighbors</a> (horizontal, vertical, diagonal) using the following four rules (taken from the above Wikipedia article):</p>
+<ol>
+<li>Any live cell with fewer than two live neighbors dies as if caused by under-population.</li>
+<li>Any live cell with two or three live neighbors lives on to the next generation.</li>
+<li>Any live cell with more than three live neighbors dies, as if by over-population.</li>
+<li>Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.</li>
+</ol>
+<p>The next state is created by applying the above rules simultaneously to every cell in the current state, where births and deaths occur simultaneously. Given the current state of the <code>m x n</code> grid <code>board</code>, return <em>the next state</em>.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> board = [[0,1,0],[0,0,1],[1,1,1],[0,0,0]]
+<strong>Output:</strong> [[0,0,0],[1,0,1],[0,1,1],[0,1,0]]</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> board = [[1,1],[1,0]]
+<strong>Output:</strong> [[1,1],[1,1]]</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>m == board.length</code></li>
+<li><code>n == board[i].length</code></li>
+<li><code>1 &lt;= m, n &lt;= 25</code></li>
+<li><code>board[i][j]</code> is <code>0</code> or <code>1</code>.</li>
+</ul>
+<p><strong>Follow up:</strong></p>
+<ul>
+<li>Could you solve it in-place? Remember that the board needs to be updated simultaneously: You cannot update some cells first and then use their updated values to update other cells.</li>
+<li>In this question, we represent the board using a 2D array. In principle, the board is infinite, which would cause problems when the active area encroaches upon the border of the array (i.e., live cells reach the border). How would you address these problems?</li>
+</ul>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">pub fn game_of_life(board: &mut Vec<Vec<i32>>) {
+    let m = board.len();
+    let n = board[0].len();
+
+    for i in 0..m {
+        for j in 0..n {
+            let neighbors = count_neighbors(board, i, j);
+            let current_state = board[i][j];
+
+            if current_state == 1 {
+                if neighbors < 2 {
+                    board[i][j] = 0;
+                } else if neighbors == 2 || neighbors == 3 {
+                    board[i][j] = 1;
+                } else if neighbors > 3 {
+                    board[i][j] = 0;
+                }
+            } else {
+                if neighbors == 3 {
+                    board[i][j] = 1;
+                }
+            }
+        }
+    }
+}
+
+fn count_neighbors(board: &Vec<Vec<i32>>, i: usize, j: usize) -> i32 {
+    let m = board.len();
+    let n = board[0].len();
+
+    let mut count = 0;
+
+    for di in -1..=1 {
+        for dj in -1..=1 {
+            let ni = (i as i32 + di) as usize;
+            let nj = (j as i32 + dj) as usize;
+
+            if ni >= m || nj >= n || ni < 0 || nj < 0 {
+                continue;
+            }
+
+            count += board[ni][nj];
+        }
+    }
+
+    count
+}
+</code></pre>
+
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 8: Char 29: error: cannot find function `count_neighbors` in this scope (solution.rs) | 8 | let neighbors = count_neighbors(board, i, j); | ^^^^^^^^^^^^^^^ not found in this scope | help: consider using the associated function on `Self` | 8 | let neighbors = Self::count_neighbors(board, i, j); | ++++++ For more information about this error, try `rustc --explain E0425`. error: could not compile `prog` (bin "prog") due to previous error</pre>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+impl Solution {
+    pub fn game_of_life(board: &mut Vec<Vec<i32>>) {
+        let m = board.len();
+        let n = board[0].len();
+
+        for i in 0..m {
+            for j in 0..n {
+                let neighbors = get_neighbors(board, i, j);
+                let next_state = get_next_state(board[i][j], neighbors);
+                board[i][j] = next_state;
+            }
+        }
+    }
+
+    fn get_neighbors(board: &Vec<Vec<i32>>, i: usize, j: usize) -> Vec<i32> {
+        let mut neighbors = Vec::new();
+
+        for k in -1..=1 {
+            for l in -1..=1 {
+                if k == 0 && l == 0 {
+                    continue;
+                }
+
+                let x = i as i32 + k;
+                let y = j as i32 + l;
+
+                if x < 0 || x >= m as i32 || y < 0 || y >= n as i32 {
+                    continue;
+                }
+
+                neighbors.push(board[x as usize][y as usize]);
+            }
+        }
+
+        neighbors
+    }
+
+    fn get_next_state(current_state: i32, neighbors: Vec<i32>) -> i32 {
+        let mut next_state = current_state;
+
+        if current_state == 1 {
+            if neighbors.iter().filter(|&x| x == 1).count() < 2 {
+                next_state = 0;
+            } else if neighbors.iter().filter(|&x| x == 1).count() == 2 || neighbors.iter().filter(|&x| x == 1).count() == 3 {
+                next_state = 1;
+            } else if neighbors.iter().filter(|&x| x == 1).count() > </code></pre>
+          
+          <div class="alert alert-info" role="alert">
+            <strong>stdout</strong>
+            <pre>Context-Length Exceeded</pre>
+          </div>
+           
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

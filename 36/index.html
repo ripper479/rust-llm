@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Valid Sudoku</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/76/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/54/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>Determine if a <code>9 x 9</code> Sudoku board is valid. Only the filled cells need to be validated <strong>according to the following rules</strong>:</p>
+<ol>
+<li>Each row must contain the digits <code>1-9</code> without repetition.</li>
+<li>Each column must contain the digits <code>1-9</code> without repetition.</li>
+<li>Each of the nine <code>3 x 3</code> sub-boxes of the grid must contain the digits <code>1-9</code> without repetition.</li>
+</ol>
+<p><strong>Note:</strong></p>
+<ul>
+<li>A Sudoku board (partially filled) could be valid but is not necessarily solvable.</li>
+<li>Only the filled cells need to be validated according to the mentioned rules.</li>
+</ul>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> board = 
+[[ "5 ", "3 ", ". ", ". ", "7 ", ". ", ". ", ". ", ". "]
+,[ "6 ", ". ", ". ", "1 ", "9 ", "5 ", ". ", ". ", ". "]
+,[ ". ", "9 ", "8 ", ". ", ". ", ". ", ". ", "6 ", ". "]
+,[ "8 ", ". ", ". ", ". ", "6 ", ". ", ". ", ". ", "3 "]
+,[ "4 ", ". ", ". ", "8 ", ". ", "3 ", ". ", ". ", "1 "]
+,[ "7 ", ". ", ". ", ". ", "2 ", ". ", ". ", ". ", "6 "]
+,[ ". ", "6 ", ". ", ". ", ". ", ". ", "2 ", "8 ", ". "]
+,[ ". ", ". ", ". ", "4 ", "1 ", "9 ", ". ", ". ", "5 "]
+,[ ". ", ". ", ". ", ". ", "8 ", ". ", ". ", "7 ", "9 "]]
+<strong>Output:</strong> true</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> board = 
+[[ "8 ", "3 ", ". ", ". ", "7 ", ". ", ". ", ". ", ". "]
+,[ "6 ", ". ", ". ", "1 ", "9 ", "5 ", ". ", ". ", ". "]
+,[ ". ", "9 ", "8 ", ". ", ". ", ". ", ". ", "6 ", ". "]
+,[ "8 ", ". ", ". ", ". ", "6 ", ". ", ". ", ". ", "3 "]
+,[ "4 ", ". ", ". ", "8 ", ". ", "3 ", ". ", ". ", "1 "]
+,[ "7 ", ". ", ". ", ". ", "2 ", ". ", ". ", ". ", "6 "]
+,[ ". ", "6 ", ". ", ". ", ". ", ". ", "2 ", "8 ", ". "]
+,[ ". ", ". ", ". ", "4 ", "1 ", "9 ", ". ", ". ", "5 "]
+,[ ". ", ". ", ". ", ". ", "8 ", ". ", ". ", "7 ", "9 "]]
+<strong>Output:</strong> false
+<strong>Explanation:</strong> Same as Example 1, except with the <strong>5</strong> in the top left corner being modified to <strong>8</strong>. Since there are two 8's in the top left 3x3 sub-box, it is invalid.</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>board.length == 9</code></li>
+<li><code>board[i].length == 9</code></li>
+<li><code>board[i][j]</code> is a digit <code>1-9</code> or <code>'.'</code>.</li>
+</ul>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">pub fn is_valid_sudoku(board: Vec<Vec<char>>) -> bool {
+    let mut rows = [0; 9];
+    let mut cols = [0; 9];
+    let mut boxes = [[0; 9]; 9];
+
+    for i in 0..9 {
+        for j in 0..9 {
+            let c = board[i][j];
+            if c != '.' {
+                let index = c.to_digit(10).unwrap() as usize - 1;
+                rows[i] |= 1 << index;
+                cols[j] |= 1 << index;
+                boxes[i / 3][j / 3] |= 1 << index;
+            }
+        }
+    }
+
+    for row in rows.iter() {
+        if row.count_ones() != 9 {
+            return false;
+        }
+    }
+
+    for col in cols.iter() {
+        if col.count_ones() != 9 {
+            return false;
+        }
+    }
+
+    for box in boxes.iter() {
+        if box.count_ones() != 9 {
+            return false;
+        }
+    }
+
+    true
+}
+</code></pre>
+
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 31: Char 13: error: expected pattern, found keyword `in` (solution.rs) | 31 | for box in boxes.iter() { | ^^ expected pattern Line 20: Char 16: error: no method named `count_ones` found for reference `&{integer}` in the current scope (solution.rs) | 20 | if row.count_ones() != 9 { | ^^^^^^^^^^ method not found in `&{integer}` Line 26: Char 16: error: no method named `count_ones` found for reference `&{integer}` in the current scope (solution.rs) | 26 | if col.count_ones() != 9 { | ^^^^^^^^^^ method not found in `&{integer}` For more information about this error, try `rustc --explain E0599`. error: could not compile `prog` (bin "prog") due to 3 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+impl Solution {
+    pub fn is_valid_sudoku(board: Vec<Vec<char>>) -> bool {
+        // Check rows
+        for row in 0..9 {
+            let mut seen = HashSet::new();
+            for col in 0..9 {
+                if board[row][col] != '.' {
+                    let digit = board[row][col] as u8 - '0' as u8;
+                    if seen.contains(&digit) {
+                        return false;
+                    }
+                    seen.insert(digit);
+                }
+            }
+        }
+
+        // Check columns
+        for col in 0..9 {
+            let mut seen = HashSet::new();
+            for row in 0..9 {
+                if board[row][col] != '.' {
+                    let digit = board[row][col] as u8 - '0' as u8;
+                    if seen.contains(&digit) {
+                        return false;
+                    }
+                    seen.insert(digit);
+                }
+            }
+        }
+
+        // Check sub-boxes
+        for sub_box_row in 0..3 {
+            for sub_box_col in 0..3 {
+                let mut seen = HashSet::new();
+                for row in sub_box_row * 3..(sub_box_row + 1) * 3 {
+                    for col in sub_box_col * 3..(sub_box_col + 1) * 3 {
+                        if board[row][col] != '.' {
+                            let digit = board[row][col] as u8 - '0' as u8;
+                            if seen.contains(&digit) {
+                                return false;
+                            }
+                            seen.insert(digit);
+                        }
+                    }
+                }
+            }
+        }
+
+        true
+    }
+}
+</code></pre>
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 5: Char 28: error: failed to resolve: use of undeclared type `HashSet` (solution.rs) | 5 | let mut seen = HashSet::new(); | ^^^^^^^ use of undeclared type `HashSet` | help: consider importing this struct | 56+ use std::collections::HashSet; | Line 19: Char 28: error: failed to resolve: use of undeclared type `HashSet` (solution.rs) | 19 | let mut seen = HashSet::new(); | ^^^^^^^ use of undeclared type `HashSet` | help: consider importing this struct | 56 + use std::collections::HashSet; | Line 34: Char 32: error: failed to resolve: use of undeclared type `HashSet` (solution.rs) | 34 | let mut seen = HashSet::new(); | ^^^^^^^ use of undeclared type `HashSet` | help: consider importing this struct | 56 + use std::collections::HashSet; | For more information about this error, try `rustc --explain E0433`. error: could not compile `prog` (bin "prog") due to 3 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

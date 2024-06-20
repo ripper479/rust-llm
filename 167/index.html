@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Two Sum II - Input Array Is Sorted</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/392/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/11/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>Given a <strong>1-indexed</strong> array of integers <code>numbers</code> that is already <strong><em>sorted in non-decreasing order</em></strong>, find two numbers such that they add up to a specific <code>target</code> number. Let these two numbers be <code>numbers[index1]</code> and <code>numbers[index2]</code> where <code>1 &lt;= index1 &lt; index2 &lt;= numbers.length</code>.</p>
+<p>Return <em>the indices of the two numbers,</em> <code>index1</code> <em>and</em> <code>index2</code><em>, <strong>added by one</strong> as an integer array</em> <code>[index1, index2]</code> <em>of length 2.</em></p>
+<p>The tests are generated such that there is <strong>exactly one solution</strong>. You <strong>may not</strong> use the same element twice.</p>
+<p>Your solution must use only constant extra space.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> numbers = [2,7,11,15], target = 9
+<strong>Output:</strong> [1,2]
+<strong>Explanation:</strong> The sum of 2 and 7 is 9. Therefore, index1 = 1, index2 = 2. We return [1, 2].</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> numbers = [2,3,4], target = 6
+<strong>Output:</strong> [1,3]
+<strong>Explanation:</strong> The sum of 2 and 4 is 6. Therefore index1 = 1, index2 = 3. We return [1, 3].</p>
+<p><strong>Example 3:</strong></p>
+<p><strong>Input:</strong> numbers = [-1,0], target = -1
+<strong>Output:</strong> [1,2]
+<strong>Explanation:</strong> The sum of -1 and 0 is -1. Therefore index1 = 1, index2 = 2. We return [1, 2].</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>2 &lt;= numbers.length &lt;= 3 * 104</code></li>
+<li><code>-1000 &lt;= numbers[i] &lt;= 1000</code></li>
+<li><code>numbers</code> is sorted in <strong>non-decreasing order</strong>.</li>
+<li><code>-1000 &lt;= target &lt;= 1000</code></li>
+<li>The tests are generated such that there is <strong>exactly one solution</strong>.</li>
+</ul>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">pub fn two_sum(numbers: &[i32], target: i32) -> Option<[i32; 2]> {
+    let (mut left, mut right) = (0, numbers.len() - 1);
+    while left < right {
+        let sum = numbers[left] + numbers[right];
+        match sum.cmp(&target) {
+            std::cmp::Ordering::Less => left += 1,
+            std::cmp::Ordering::Greater => right -= 1,
+            std::cmp::Ordering::Equal => return Some([left + 1, right + 1]),
+        }
+    }
+    None
+}
+</code></pre>
+
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 9: Char 49: error: mismatched types (solution.rs) | 9 | std::cmp::Ordering::Equal => return Some([left + 1, right + 1]), | ^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Vec<i32>`, found `Option<[usize; 2]>` | = note: expected struct `Vec<i32>` found enum `Option<[usize; 2]>` Line 12: Char 5: error: mismatched types (solution.rs) | 2 | pub fn two_sum(numbers: Vec<i32>, target: i32) -> Vec<i32> { | -------- expected `Vec<i32>` because of return type ... 12 | None | ^^^^ expected `Vec<i32>`, found `Option<_>` | = note: expected struct `Vec<i32>` found enum `Option<_>` For more information about this error, try `rustc --explain E0308`. error: could not compile `prog` (bin "prog") due to 2 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+impl Solution {
+    pub fn two_sum(numbers: Vec<i32>, target: i32) -> Vec<i32> {
+        let mut left = 0;
+        let mut right = numbers.len() - 1;
+
+        while left < right {
+            let sum = numbers[left] + numbers[right];
+            if sum == target {
+                return vec![left + 1, right + 1];
+            } else if sum < target {
+                left += 1;
+            } else {
+                right -= 1;
+            }
+        }
+
+        vec![]
+    }
+}
+</code></pre>
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 9: Char 29: error: mismatched types (solution.rs) | 9 | return vec![left + 1, right + 1]; | ^^^^^^^^ expected `i32`, found `usize` | help: you can convert a `usize` to an `i32` and panic if the converted value doesn't fit | 9 | return vec![(left + 1).try_into().unwrap(), right + 1]; | + +++++++++++++++++++++ For more information about this error, try `rustc --explain E0308`. error: could not compile `prog` (bin "prog") due to previous error</pre>
+          </div>
+          
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

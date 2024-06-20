@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Construct Quad Tree</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/148/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/23/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>Given a <code>n * n</code> matrix <code>grid</code> of <code>0's</code> and <code>1's</code> only. We want to represent <code>grid</code> with a Quad-Tree.</p>
+<p>Return <em>the root of the Quad-Tree representing</em> <code>grid</code>.</p>
+<p>A Quad-Tree is a tree data structure in which each internal node has exactly four children. Besides, each node has two attributes:</p>
+<ul>
+<li><code>val</code>: True if the node represents a grid of 1's or False if the node represents a grid of 0's. Notice that you can assign the <code>val</code> to True or False when <code>isLeaf</code> is False, and both are accepted in the answer.</li>
+<li><code>isLeaf</code>: True if the node is a leaf node on the tree or False if the node has four children.</li>
+</ul>
+<p>class Node {
+    public boolean val;
+    public boolean isLeaf;
+    public Node topLeft;
+    public Node topRight;
+    public Node bottomLeft;
+    public Node bottomRight;
+}</p>
+<p>We can construct a Quad-Tree from a two-dimensional area using the following steps:</p>
+<ol>
+<li>If the current grid has the same value (i.e all <code>1's</code> or all <code>0's</code>) set <code>isLeaf</code> True and set <code>val</code> to the value of the grid and set the four children to Null and stop.</li>
+<li>If the current grid has different values, set <code>isLeaf</code> to False and set <code>val</code> to any value and divide the current grid into four sub-grids as shown in the photo.</li>
+<li>Recurse for each of the children with the proper sub-grid.</li>
+</ol>
+<p>If you want to know more about the Quad-Tree, you can refer to the <a href="https://en.wikipedia.org/wiki/Quadtree">wiki</a>.</p>
+<p><strong>Quad-Tree format:</strong></p>
+<p>You don't need to read this section for solving the problem. This is only if you want to understand the output format here. The output represents the serialized format of a Quad-Tree using level order traversal, where <code>null</code> signifies a path terminator where no node exists below.</p>
+<p>It is very similar to the serialization of the binary tree. The only difference is that the node is represented as a list <code>[isLeaf, val]</code>.</p>
+<p>If the value of <code>isLeaf</code> or <code>val</code> is True we represent it as <strong>1</strong> in the list <code>[isLeaf, val]</code> and if the value of <code>isLeaf</code> or <code>val</code> is False we represent it as <strong>0</strong>.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> grid = [[0,1],[1,0]]
+<strong>Output:</strong> [[0,1],[1,0],[1,1],[1,1],[1,0]]
+<strong>Explanation:</strong> The explanation of this example is shown below:
+Notice that 0 represnts False and 1 represents True in the photo representing the Quad-Tree.</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> grid = [[1,1,1,1,0,0,0,0],[1,1,1,1,0,0,0,0],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,0,0,0,0],[1,1,1,1,0,0,0,0],[1,1,1,1,0,0,0,0],[1,1,1,1,0,0,0,0]]
+<strong>Output:</strong> [[0,1],[1,1],[0,1],[1,1],[1,0],null,null,null,null,[1,0],[1,0],[1,1],[1,1]]
+<strong>Explanation:</strong> All values in the grid are not the same. We divide the grid into four sub-grids.
+The topLeft, bottomLeft and bottomRight each has the same value.
+The topRight have different values so we divide it into 4 sub-grids where each has the same value.
+Explanation is shown in the photo below:</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>n == grid.length == grid[i].length</code></li>
+<li><code>n == 2x</code> where <code>0 &lt;= x &lt;= 6</code></li>
+</ul>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">pub struct Solution {
+    pub root: Option<Box<Node>>,
+}
+
+impl Solution {
+    pub fn new(grid: Vec<Vec<i32>>) -> Self {
+        let root = Self::construct_node(grid);
+        Self { root }
+    }
+
+    fn construct_node(grid: Vec<Vec<i32>>) -> Option<Box<Node>> {
+        let n = grid.len();
+        if n == 1 {
+            Some(Box::new(Node {
+                val: grid[0][0] == 1,
+                is_leaf: true,
+                top_left: None,
+                top_right: None,
+                bottom_left: None,
+                bottom_right: None,
+            }))
+        } else {
+            let top_left = Self::construct_node(grid[0..n / 2].to_vec());
+            let top_right = Self::construct_node(grid[n / 2..n].to_vec());
+            let bottom_left = Self::construct_node(grid[n / 2..n].to_vec());
+            let bottom_right = Self::construct_node(grid[n / 2..n].to_vec());
+
+            let mut is_leaf = true;
+            let mut val = grid[0][0];
+            for i in 0..n {
+                for j in 0..n {
+                    if grid[i][j] != val {
+                        is_leaf = false;
+                        break;
+                    }
+                }
+            }
+
+            Some(Box::new(Node {
+                val: val == 1,
+                is_leaf,
+                top_left,
+                top_right,
+                bottom_left,
+                bottom_right,
+            }))
+        }
+    }
+}
+
+pub struct Node {
+    pub val: bool,
+    pub is_leaf: bool,
+    pub top_left: Option<Box<Node>>,
+    pub top_right: Option<Box<Node>>,
+    pub bottom_left: Option<Box<Node>>,
+    pub bottom_right: Option<Box<Node>>,
+}
+</code></pre>
+
+          
+          <div class="alert alert-info" role="alert">
+            <strong>stdout</strong>
+            <pre>No Rust Compiler</pre>
+          </div>
+           
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+use std::collections::HashMap;
+
+struct Node {
+    val: bool,
+    is_leaf: bool,
+    top_left: Option<Box<Node>>,
+    top_right: Option<Box<Node>>,
+    bottom_left: Option<Box<Node>>,
+    bottom_right: Option<Box<Node>>,
+}
+
+impl Node {
+    fn new(val: bool, is_leaf: bool) -> Self {
+        Self {
+            val,
+            is_leaf,
+            top_left: None,
+            top_right: None,
+            bottom_left: None,
+            bottom_right: None,
+        }
+    }
+}
+
+struct Solution {
+    grid: Vec<Vec<bool>>,
+    nodes: HashMap<(usize, usize), Box<Node>>,
+}
+
+impl Solution {
+    fn construct(grid: Vec<Vec<bool>>) -> Box<Node> {
+        let mut nodes = HashMap::new();
+        let mut root = None;
+
+        for i in 0..grid.len() {
+            for j in 0..grid[i].len() {
+                let node = Node::new(grid[i][j], false);
+                nodes.insert((i, j), Box::new(node));
+            }
+        }
+
+        for i in 0..grid.len() {
+            for j in 0..grid[i].len() {
+                let node = nodes.get(&(i, j)).unwrap();
+                if i > 0 {
+                    let top_left = nodes.get(&(i - 1, j)).unwrap();
+                    node.top_left = Some(top_left.clone());
+                }
+                if i < grid.len() - 1 {
+                    let top_right = nodes.get(&(i + 1, j)).unwrap();
+                    node.top_right = Some(top_right.clone());
+                }
+                if j > 0 {
+                    let bottom_left = nodes.get(&(i, j - 1)).unwrap();
+                    node.bottom_left = Some(</code></pre>
+          
+          <div class="alert alert-info" role="alert">
+            <strong>stdout</strong>
+            <pre>No Rust Compiler</pre>
+          </div>
+           
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

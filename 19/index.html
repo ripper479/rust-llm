@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Remove Nth Node From End of List</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/25/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/82/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>Given the <code>head</code> of a linked list, remove the <code>nth</code> node from the end of the list and return its head.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> head = [1,2,3,4,5], n = 2
+<strong>Output:</strong> [1,2,3,5]</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> head = [1], n = 1
+<strong>Output:</strong> []</p>
+<p><strong>Example 3:</strong></p>
+<p><strong>Input:</strong> head = [1,2], n = 1
+<strong>Output:</strong> [1]</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li>The number of nodes in the list is <code>sz</code>.</li>
+<li><code>1 &lt;= sz &lt;= 30</code></li>
+<li><code>0 &lt;= Node.val &lt;= 100</code></li>
+<li><code>1 &lt;= n &lt;= sz</code></li>
+</ul>
+<p><strong>Follow up:</strong> Could you do this in one pass?</p>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">use std::cell::RefCell;
+use std::rc::Rc;
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct ListNode {
+    pub val: i32,
+    pub next: Option<Rc<RefCell<ListNode>>>,
+}
+
+impl ListNode {
+    fn new(val: i32) -> Self {
+        ListNode {
+            next: None,
+            val,
+        }
+    }
+}
+
+pub struct Solution;
+
+impl Solution {
+    pub fn remove_nth_from_end(head: Option<Rc<RefCell<ListNode>>>, n: i32) -> Option<Rc<RefCell<ListNode>>> {
+        let mut dummy = Rc::new(RefCell::new(ListNode::new(0)));
+        let mut p = &dummy;
+        let mut q = &head;
+
+        for _ in 0..n {
+            q = q.as_ref()?.borrow().next.as_ref();
+        }
+
+        while q.is_some() {
+            p = p.as_ref()?.borrow().next.as_ref();
+            q = q.as_ref()?.borrow().next.as_ref();
+        }
+
+        let p = p.as_ref()?.borrow_mut().next.take();
+        dummy.as_ref()?.borrow_mut().next = p;
+
+        head
+    }
+}
+</code></pre>
+
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 19: Char 25: error: failed to resolve: use of undeclared type `Rc` (solution.rs) | 19 | let mut dummy = Rc::new(RefCell::new(ListNode::new(0))); | ^^ use of undeclared type `Rc` | help: consider importing this struct | 42 + use std::rc::Rc; | Line 19: Char 33: error: failed to resolve: use of undeclared type `RefCell` (solution.rs) | 19 | let mut dummy = Rc::new(RefCell::new(ListNode::new(0))); | ^^^^^^^ use of undeclared type `RefCell` | help: consider importing one of these items | 42 + use core::cell::RefCell; | 42 + use std::cell::RefCell; | Line 24: Char 29: error: no method named `borrow` found for reference `&Box<list_node::ListNode>` in the current scope (solution.rs) | 24 | q = q.as_ref()?.borrow().next.as_ref(); | ^^^^^^ method not found in `&Box<ListNode>` | = help: items from traits can only be used if the trait is in scope help: the following trait is implemented but not in scope; perhaps add a `use` for it: | 18 + use std::borrow::Borrow; | Line 29: Char 29: error: no method named `borrow` found for reference `&Box<list_node::ListNode>` in the current scope (solution.rs) | 29 | q = q.as_ref()?.borrow().next.as_ref(); | ^^^^^^ method not found in `&Box<ListNode>` | = help: items from traits can only be used if the trait is in scope help: the following trait is implemented but not in scope; perhaps add a `use` for it: | 18 + use std::borrow::Borrow; | Some errors have detailed explanations: E0433, E0599. For more information about an error, try `rustc --explain E0433`. error: could not compile `prog` (bin "prog") due to 4 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+use std::option::Option;
+use std::boxed::Box;
+
+#[derive(PartialEq, Eq, Clone, Debug)]
+pub struct ListNode {
+    pub val: i32,
+    pub next: Option<Box<ListNode>>,
+}
+
+impl ListNode {
+    #[inline]
+    fn new(val: i32) -> Self {
+        ListNode {
+            next: None,
+            val,
+        }
+    }
+}
+
+impl Solution {
+    pub fn remove_nth_from_end(head: Option<Box<ListNode>>, n: i32) -> Option<Box<ListNode>> {
+        let mut head = head;
+        let mut n = n;
+        let mut current = head;
+        let mut previous = None;
+
+        while n > 0 {
+            previous = current;
+            current = current.next;
+            n -= 1;
+        }
+
+        if previous.is_none() {
+            head = current.next;
+        } else {
+            previous.unwrap().next = current.next;
+        }
+
+        head
+    }
+}
+</code></pre>
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 26: Char 31: error: no field `next` on type `Option<Box<list_node::ListNode>>` (solution.rs) | 26 | current = current.next; | ^^^^ Line 31: Char 28: error: no field `next` on type `Option<Box<list_node::ListNode>>` (solution.rs) | 31 | head = current.next; | ^^^^ Line 33: Char 46: error: no field `next` on type `Option<Box<list_node::ListNode>>` (solution.rs) | 33 | previous.unwrap().next = current.next; | ^^^^ For more information about this error, try `rustc --explain E0609`. error: could not compile `prog` (bin "prog") due to 3 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

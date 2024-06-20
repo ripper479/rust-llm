@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Word Pattern</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/205/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/242/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>Given a <code>pattern</code> and a string <code>s</code>, find if <code>s</code> follows the same pattern.</p>
+<p>Here <strong>follow</strong> means a full match, such that there is a bijection between a letter in <code>pattern</code> and a <strong>non-empty</strong> word in <code>s</code>.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> pattern =  "abba ", s =  "dog cat cat dog "
+<strong>Output:</strong> true</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> pattern =  "abba ", s =  "dog cat cat fish "
+<strong>Output:</strong> false</p>
+<p><strong>Example 3:</strong></p>
+<p><strong>Input:</strong> pattern =  "aaaa ", s =  "dog cat cat dog "
+<strong>Output:</strong> false</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>1 &lt;= pattern.length &lt;= 300</code></li>
+<li><code>pattern</code> contains only lower-case English letters.</li>
+<li><code>1 &lt;= s.length &lt;= 3000</code></li>
+<li><code>s</code> contains only lowercase English letters and spaces <code>' '</code>.</li>
+<li><code>s</code> <strong>does not contain</strong> any leading or trailing spaces.</li>
+<li>All the words in <code>s</code> are separated by a <strong>single space</strong>.</li>
+</ul>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-success"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ✅
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">pub fn word_pattern(pattern: String, s: String) -> bool {
+    let pattern: Vec<char> = pattern.chars().collect();
+    let s: Vec<&str> = s.split_whitespace().collect();
+
+    if pattern.len() != s.len() {
+        return false;
+    }
+
+    let mut map = std::collections::HashMap::new();
+    let mut reverse_map = std::collections::HashMap::new();
+
+    for (i, word) in s.iter().enumerate() {
+        if !map.contains_key(&pattern[i]) && !reverse_map.contains_key(word) {
+            map.insert(pattern[i], i);
+            reverse_map.insert(word, pattern[i]);
+        } else if map.get(&pattern[i]) != Some(&i) || reverse_map.get(word) != Some(&pattern[i]) {
+            return false;
+        }
+    }
+
+    true
+}
+</code></pre>
+
+          
+          <div class="alert alert-info" role="alert">
+            <strong>stdout</strong>
+            <pre>Wrong Answer</pre>
+          </div>
+           
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-success"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ✅
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+impl Solution {
+    pub fn word_pattern(pattern: String, s: String) -> bool {
+        let mut pattern_iter = pattern.chars();
+        let mut s_iter = s.split_whitespace();
+
+        while let Some(pattern_char) = pattern_iter.next() {
+            if let Some(word) = s_iter.next() {
+                if word.is_empty() {
+                    return false;
+                }
+                if pattern_char != word.chars().next().unwrap() {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        true
+    }
+}
+</code></pre>
+          
+          <div class="alert alert-info" role="alert">
+            <strong>stdout</strong>
+            <pre>Wrong Answer</pre>
+          </div>
+           
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

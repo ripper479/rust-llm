@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Basic Calculator</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/150/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/141/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>Given a string <code>s</code> representing a valid expression, implement a basic calculator to evaluate it, and return <em>the result of the evaluation</em>.</p>
+<p><strong>Note:</strong> You are <strong>not</strong> allowed to use any built-in function which evaluates strings as mathematical expressions, such as <code>eval()</code>.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> s =  "1 + 1 "
+<strong>Output:</strong> 2</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> s =  " 2-1 + 2  "
+<strong>Output:</strong> 3</p>
+<p><strong>Example 3:</strong></p>
+<p><strong>Input:</strong> s =  "(1+(4+5+2)-3)+(6+8) "
+<strong>Output:</strong> 23</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>1 &lt;= s.length &lt;= 3 * 105</code></li>
+<li><code>s</code> consists of digits, <code>'+'</code>, <code>'-'</code>, <code>'('</code>, <code>')'</code>, and <code>' '</code>.</li>
+<li><code>s</code> represents a valid expression.</li>
+<li><code>'+'</code> is <strong>not</strong> used as a unary operation (i.e., <code>"+1 "</code> and <code>"+(2 + 3) "</code> is invalid).</li>
+<li><code>'-'</code> could be used as a unary operation (i.e., <code>"-1 "</code> and <code>"-(2 + 3) "</code> is valid).</li>
+<li>There will be no two consecutive operators in the input.</li>
+<li>Every number and running calculation will fit in a signed 32-bit integer.</li>
+</ul>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">pub fn calculate(s: String) -> i32 {
+    let mut stack = Vec::new();
+    let mut num = String::new();
+    let mut sign = '+';
+
+    for c in s.chars() {
+        match c {
+            ' ' => continue,
+            '+' | '-' | '*' | '/' => {
+                if !num.is_empty() {
+                    stack.push(sign);
+                    stack.push(num.parse::<i32>().unwrap());
+                    num.clear();
+                }
+                sign = c;
+            }
+            '(' => {
+                stack.push(sign);
+                stack.push(num.parse::<i32>().unwrap());
+                num.clear();
+                sign = '+';
+            }
+            ')' => {
+                let mut result = num.parse::<i32>().unwrap();
+                num.clear();
+
+                while let Some(op) = stack.pop() {
+                    if op == '(' {
+                        break;
+                    }
+                    let num = stack.pop().unwrap();
+                    result = match op {
+                        '+' => result + num,
+                        '-' => result - num,
+                        '*' => result * num,
+                        '/' => result / num,
+                        _ => unreachable!(),
+                    };
+                }
+
+                stack.push(result);
+                sign = '+';
+            }
+            _ => num.push(c),
+        }
+    }
+
+    if !num.is_empty() {
+        stack.push(sign);
+        stack.push(num.parse::<i32>().unwrap());
+    }
+
+    while let Some(op) = stack.pop() {
+        let num = stack.pop().unwrap();
+        let result = match op {
+            '+' => num + num,
+            '-' => num - num,
+            '*' => num * num,
+            '/' => num / num,
+            _ => unreachable!(),
+        };
+        stack.push(result);
+    }
+
+    stack.pop().unwrap</code></pre>
+
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 13: Char 32: error: mismatched types (solution.rs) | 12 | stack.push(sign); | ----- ---- this argument has type `char`... | | | ... which causes `stack` to have type `Vec<char>` 13 | stack.push(num.parse::<i32>().unwrap()); | ---- ^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `char`, found `i32` | | | arguments to this method are incorrect | Line 1877: Char 12: note: method defined here (solution.rs) Line 20: Char 28: error: mismatched types (solution.rs) | 12 | stack.push(sign); | ----- ---- this argument has type `char`... | | | ... which causes `stack` to have type `Vec<char>` ... 20 | stack.push(num.parse::<i32>().unwrap()); | ---- ^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `char`, found `i32` | | | arguments to this method are incorrect | Line 1877: Char 12: note: method defined here (solution.rs) Line 34: Char 39: error: cannot add `char` to `i32` (solution.rs) | 34 | '+' => result + num, | ^ no implementation for `i32 + char` | = help: the trait `Add<char>` is not implemented for `i32` = help: the following other types implement trait `Add<Rhs>`: <i32 as Add> <i32 as Add<&i32>> <&'a i32 as Add<i32>> <&i32 as Add<&i32>> Line 35: Char 39: error: cannot subtract `char` from `i32` (solution.rs) | 35 | '-' => result - num, | ^ no implementation for `i32 - char` | = help: the trait `Sub<char>` is not implemented for `i32` = help: the following other types implement trait `Sub<Rhs>`: <i32 as Sub> <i32 as Sub<&i32>> <&'a i32 as Sub<i32>> <&i32 as Sub<&i32>> Line 36: Char 39: error: cannot multiply `i32` by `char` (solution.rs) | 36 | '*' => result * num, | ^ no implementation for `i32 * char` | = help: the trait `Mul<char>` is not implemented for `i32` = help: the following other types implement trait `Mul<Rhs>`: <i32 as Mul> <i32 as Mul<&i32>> <&'a i32 as Mul<i32>> <&i32 as Mul<&i32>> Line 37: Char 39: error: cannot divide `i32` by `char` (solution.rs) | 37 | '/' => result / num, | ^ no implementation for `i32 / char` | = help: the trait `Div<char>` is not implemented for `i32` = help: the following other types implement trait `Div<Rhs>`: <i32 as Div> <i32 as Div<&i32>> <&'a i32 as Div<i32>> <&i32 as Div<&i32>> Line 42: Char 28: error: mismatched types (solution.rs) | 12 | stack.push(sign); | ----- ---- this argument has type `char`... | | | ... which causes `stack` to have type `Vec<char>` ... 42 | stack.push(result); | ---- ^^^^^^ expected `char`, found `i32` | | | arguments to this method are incorrect | Line 1877: Char 12: note: method defined here (solution.rs) Line 51: Char 20: error: mismatched types (solution.rs) | 12 | stack.push(sign); | ----- ---- this argument has type `char`... | | | ... which causes `stack` to have type `Vec<char>` ... 51 | stack.push(num.parse::<i32>().unwrap()); | ---- ^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `char`, found `i32` | | | arguments to this method are incorrect | Line 1877: Char 12: note: method defined here (solution.rs) Line 57: Char 24: error: cannot add `char` to `char` (solution.rs) | 57 | '+' => num + num, | --- ^ --- char | | | char Line 58: Char 24: error: cannot subtract `char` from `char` (solution.rs) | 58 | '-' => num - num, | --- ^ --- char | | | char Line 59: Char 24: error: cannot multiply `char` by `char` (solution.rs) | 59 | '*' => num * num, | --- ^ --- char | | | char Line 60: Char 24: error: cannot divide `char` by `char` (solution.rs) | 60 | '/' => num / num, | --- ^ --- char | | | char Line 66: Char 17: error: no field `unwrap` on type `Option<char>` (solution.rs) | 66 | stack.pop().unwrap | ^^^^^^ Some errors have detailed explanations: E0277, E0308, E0369, E0609. For more information about an error, try `rustc --explain E0277`. error: could not compile `prog` (bin "prog") due to 13 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+impl Solution {
+    pub fn calculate(s: String) -> i32 {
+        let mut stack = Vec::new();
+        let mut result = 0;
+        let mut operator = '+';
+
+        for c in s.chars() {
+            match c {
+                '+' | '-' => {
+                    if operator == '+' {
+                        result += stack.pop().unwrap();
+                    } else {
+                        result -= stack.pop().unwrap();
+                    }
+                    operator = c;
+                }
+                '(' => {
+                    stack.push(result);
+                    result = 0;
+                    operator = '+';
+                }
+                ')' => {
+                    result += stack.pop().unwrap();
+                    operator = '+';
+                }
+                _ => {
+                    result = result * 10 + c.to_digit(10).unwrap();
+                }
+            }
+        }
+
+        if operator == '+' {
+            result += stack.pop().unwrap();
+        } else {
+            result -= stack.pop().unwrap();
+        }
+
+        result
+    }
+}
+</code></pre>
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 38: Char 9: error: mismatched types (solution.rs) | 2 | pub fn calculate(s: String) -> i32 { | --- expected `i32` because of return type ... 38 | result | ^^^^^^ expected `i32`, found `u32` | help: you can convert a `u32` to an `i32` and panic if the converted value doesn't fit | 38 | result.try_into().unwrap() | ++++++++++++++++++++ For more information about this error, try `rustc --explain E0308`. error: could not compile `prog` (bin "prog") due to previous error</pre>
+          </div>
+          
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

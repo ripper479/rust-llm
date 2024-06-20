@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Reverse Linked List II</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/138/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/25/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>Given the <code>head</code> of a singly linked list and two integers <code>left</code> and <code>right</code> where <code>left &lt;= right</code>, reverse the nodes of the list from position <code>left</code> to position <code>right</code>, and return <em>the reversed list</em>.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> head = [1,2,3,4,5], left = 2, right = 4
+<strong>Output:</strong> [1,4,3,2,5]</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> head = [5], left = 1, right = 1
+<strong>Output:</strong> [5]</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li>The number of nodes in the list is <code>n</code>.</li>
+<li><code>1 &lt;= n &lt;= 500</code></li>
+<li><code>-500 &lt;= Node.val &lt;= 500</code></li>
+<li><code>1 &lt;= left &lt;= right &lt;= n</code></li>
+</ul>
+<p><strong>Follow up:</strong> Could you do it in one pass?</p>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">// Definition for singly-linked list.
+#[derive(PartialEq, Eq, Clone, Debug)]
+pub struct ListNode {
+    pub val: i32,
+    pub next: Option<Box<ListNode>>,
+}
+
+impl ListNode {
+    #[inline]
+    fn new(val: i32) -> Self {
+        ListNode {
+            next: None,
+            val,
+        }
+    }
+}
+
+pub struct Solution;
+
+impl Solution {
+    pub fn reverse_between(
+        head: Option<Box<ListNode>>,
+        left: i32,
+        right: i32,
+    ) -> Option<Box<ListNode>> {
+        let mut head = head;
+        let mut prev = None;
+        let mut count = 1;
+        let mut start = None;
+        let mut end = None;
+
+        while let Some(mut node) = head {
+            if count == left {
+                start = Some(node);
+            }
+            if count == right {
+                end = Some(node);
+            }
+
+            if count > left && count <= right {
+                let next = node.next.take();
+                node.next = prev;
+                prev = Some(node);
+                head = next;
+            } else {
+                head = node.next;
+                count += 1;
+            }
+        }
+
+        if let Some(start) = start {
+            let mut start = start;
+            let mut end = end.unwrap();
+            let mut prev = prev.unwrap();
+            let mut next = start.next.take();
+
+            start.next = end.next;
+            end.next = next;
+            prev.next = Some(end);
+        }
+
+        head
+    }
+}
+</code></pre>
+
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 30: Char 28: error: use of moved value: `node` (solution.rs) | 25 | while let Some(mut node) = head { | -------- | | | this reinitialization might get skipped | move occurs because `node` has type `Box<list_node::ListNode>`, which does not implement the `Copy` trait 26 | if count == left { 27 | start = Some(node); | ---- value moved here ... 30 | end = Some(node); | ^^^^ value used here after move | help: consider cloning the value if the performance cost is acceptable | 27 | start = Some(node.clone()); | ++++++++ Line 39: Char 24: error: use of moved value: `node.next` (solution.rs) | 25 | while let Some(mut node) = head { | -------- | | | this reinitialization might get skipped | move occurs because `node` has type `Box<list_node::ListNode>`, which does not implement the `Copy` trait 26 | if count == left { 27 | start = Some(node); | ---- value moved here ... 30 | end = Some(node); | ---- value moved here ... 39 | head = node.next; | ^^^^^^^^^ value used here after move For more information about this error, try `rustc --explain E0382`. error: could not compile `prog` (bin "prog") due to 2 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+use std::option::Option;
+use std::boxed::Box;
+
+#[derive(PartialEq, Eq, Clone, Debug)]
+pub struct ListNode {
+    pub val: i32,
+    pub next: Option<Box<ListNode>>,
+}
+
+impl ListNode {
+    #[inline]
+    fn new(val: i32) -> Self {
+        ListNode {
+            next: None,
+            val,
+        }
+    }
+}
+
+impl Solution {
+    pub fn reverse_between(head: Option<Box<ListNode>>, left: i32, right: i32) -> Option<Box<ListNode>> {
+        let mut current = head;
+        let mut previous = None;
+        let mut count = 0;
+
+        while let Some(node) = current {
+            if count == left - 1 {
+                previous = Some(node);
+            } else if count == right {
+                break;
+            }
+
+            count += 1;
+            current = node.next;
+        }
+
+        if let Some(previous) = previous {
+            let mut new_head = previous.next;
+            previous.next = None;
+            current = new_head;
+
+            while let Some(node) = current {
+                let next = node.next;
+                node.next = previous;
+                previous = Some(node);
+                current = next;
+            }
+
+            return Some(previous);
+        }
+
+        None
+    }
+}
+</code></pre>
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 41: Char 29: error: mismatched types (solution.rs) | 41 | node.next = previous; | --------- ^^^^^^^^ expected `Option<Box<ListNode>>`, found `Box<ListNode>` | | | expected due to the type of this binding | = note: expected enum `Option<Box<_>>` found struct `Box<_>` help: try wrapping the expression in `Some` | 41 | node.next = Some(previous); | +++++ + Line 42: Char 28: error: mismatched types (solution.rs) | 34 | if let Some(previous) = previous { | -------- expected due to the type of this binding ... 42 | previous = Some(node); | ^^^^^^^^^^ expected `Box<ListNode>`, found `Option<Box<ListNode>>` | = note: expected struct `Box<_>` found enum `Option<Box<_>>` For more information about this error, try `rustc --explain E0308`. error: could not compile `prog` (bin "prog") due to 2 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Minimum Window Substring</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/30/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/36/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>Given two strings <code>s</code> and <code>t</code> of lengths <code>m</code> and <code>n</code> respectively, return <em>the <strong>minimum window</strong></em> <strong><em>substring</em></strong> <em>of</em> <code>s</code> <em>such that every character in</em> <code>t</code> <em>(<strong>including duplicates</strong>) is included in the window</em>. If there is no such substring, return <em>the empty string</em> <code>" "</code>.</p>
+<p>The testcases will be generated such that the answer is <strong>unique</strong>.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> s =  "ADOBECODEBANC ", t =  "ABC "
+<strong>Output:</strong>  "BANC "
+<strong>Explanation:</strong> The minimum window substring  "BANC " includes 'A', 'B', and 'C' from string t.</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> s =  "a ", t =  "a "
+<strong>Output:</strong>  "a "
+<strong>Explanation:</strong> The entire string s is the minimum window.</p>
+<p><strong>Example 3:</strong></p>
+<p><strong>Input:</strong> s =  "a ", t =  "aa "
+<strong>Output:</strong>  " "
+<strong>Explanation:</strong> Both 'a's from t must be included in the window.
+Since the largest window of s only has one 'a', return empty string.</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>m == s.length</code></li>
+<li><code>n == t.length</code></li>
+<li><code>1 &lt;= m, n &lt;= 105</code></li>
+<li><code>s</code> and <code>t</code> consist of uppercase and lowercase English letters.</li>
+</ul>
+<p><strong>Follow up:</strong> Could you find an algorithm that runs in <code>O(m + n)</code> time?</p>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-success"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ✅
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">pub fn min_window(s: String, t: String) -> String {
+    let s = s.chars().collect::<Vec<char>>();
+    let t = t.chars().collect::<Vec<char>>();
+    let mut t_count = [0; 128];
+    let mut s_count = [0; 128];
+    let mut min_window_start = 0;
+    let mut min_window_end = 0;
+    let mut min_window_size = s.len();
+
+    for c in t {
+        t_count[c as usize] += 1;
+    }
+
+    for (i, c) in s.iter().enumerate() {
+        s_count[*c as usize] += 1;
+        if s_count[*c as usize] <= t_count[*c as usize] {
+            min_window_size = i + 1;
+        }
+    }
+
+    for (i, c) in s.iter().enumerate() {
+        if s_count[*c as usize] == t_count[*c as usize] {
+            min_window_start = i;
+            break;
+        }
+    }
+
+    for (i, c) in s.iter().enumerate().rev() {
+        if s_count[*c as usize] == t_count[*c as usize] {
+            min_window_end = i;
+            break;
+        }
+    }
+
+    if min_window_size == s.len() {
+        return "".to_string();
+    }
+
+    s[min_window_start..=min_window_end].iter().collect()
+}
+</code></pre>
+
+          
+          <div class="alert alert-info" role="alert">
+            <strong>stdout</strong>
+            <pre>Wrong Answer</pre>
+          </div>
+           
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+impl Solution {
+    pub fn min_window(s: String, t: String) -> String {
+        let s = s.as_bytes();
+        let t = t.as_bytes();
+        let mut window = Vec::new();
+        let mut min_window = Vec::new();
+        let mut i = 0;
+        let mut j = 0;
+        let mut count = 0;
+
+        while i < s.len() {
+            if s[i] == t[j] {
+                window.push(s[i]);
+                count += 1;
+                j += 1;
+                if j == t.len() {
+                    min_window = window;
+                    j = 0;
+                    count = 0;
+                    window.clear();
+                }
+            }
+            i += 1;
+        }
+
+        if min_window.is_empty() {
+            return "".to_string();
+        }
+
+        String::from_utf8(min_window).unwrap()
+    }
+}
+</code></pre>
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 13: Char 17: error: borrow of moved value: `window` (solution.rs) | 5 | let mut window = Vec::new(); | ---------- move occurs because `window` has type `Vec<u8>`, which does not implement the `Copy` trait ... 11 | while i < s.len() { | ----------------- inside of this loop 12 | if s[i] == t[j] { 13 | window.push(s[i]); | ^^^^^^ value borrowed here after move ... 17 | min_window = window; | ------ value moved here, in previous iteration of loop | help: consider cloning the value if the performance cost is acceptable | 17 | min_window = window.clone(); | ++++++++ For more information about this error, try `rustc --explain E0382`. error: could not compile `prog` (bin "prog") due to previous error</pre>
+          </div>
+          
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

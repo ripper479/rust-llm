@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Interleaving String</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/5/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/72/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>Given strings <code>s1</code>, <code>s2</code>, and <code>s3</code>, find whether <code>s3</code> is formed by an <strong>interleaving</strong> of <code>s1</code> and <code>s2</code>.</p>
+<p>An <strong>interleaving</strong> of two strings <code>s</code> and <code>t</code> is a configuration where <code>s</code> and <code>t</code> are divided into <code>n</code> and <code>m</code> substrings respectively, such that:</p>
+<ul>
+<li><code>s = s1 + s2 + ... + sn</code></li>
+<li><code>t = t1 + t2 + ... + tm</code></li>
+<li><code>|n - m| &lt;= 1</code></li>
+<li>The <strong>interleaving</strong> is <code>s1 + t1 + s2 + t2 + s3 + t3 + ...</code> or <code>t1 + s1 + t2 + s2 + t3 + s3 + ...</code></li>
+</ul>
+<p><strong>Note:</strong> <code>a + b</code> is the concatenation of strings <code>a</code> and <code>b</code>.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> s1 =  "aabcc ", s2 =  "dbbca ", s3 =  "aadbbcbcac "
+<strong>Output:</strong> true
+<strong>Explanation:</strong> One way to obtain s3 is:
+Split s1 into s1 =  "aa " +  "bc " +  "c ", and s2 into s2 =  "dbbc " +  "a ".
+Interleaving the two splits, we get  "aa " +  "dbbc " +  "bc " +  "a " +  "c " =  "aadbbcbcac ".
+Since s3 can be obtained by interleaving s1 and s2, we return true.</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> s1 =  "aabcc ", s2 =  "dbbca ", s3 =  "aadbbbaccc "
+<strong>Output:</strong> false
+<strong>Explanation:</strong> Notice how it is impossible to interleave s2 with any other string to obtain s3.</p>
+<p><strong>Example 3:</strong></p>
+<p><strong>Input:</strong> s1 =  " ", s2 =  " ", s3 =  " "
+<strong>Output:</strong> true</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>0 &lt;= s1.length, s2.length &lt;= 100</code></li>
+<li><code>0 &lt;= s3.length &lt;= 200</code></li>
+<li><code>s1</code>, <code>s2</code>, and <code>s3</code> consist of lowercase English letters.</li>
+</ul>
+<p><strong>Follow up:</strong> Could you solve it using only <code>O(s2.length)</code> additional memory space?</p>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-success"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ✅
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">pub fn is_interleave(s1: String, s2: String, s3: String) -> bool {
+    let s1 = s1.chars().collect::<Vec<char>>();
+    let s2 = s2.chars().collect::<Vec<char>>();
+    let s3 = s3.chars().collect::<Vec<char>>();
+
+    let n = s1.len();
+    let m = s2.len();
+
+    if n + m != s3.len() {
+        return false;
+    }
+
+    let mut dp = vec![vec![false; m + 1]; n + 1];
+
+    dp[0][0] = true;
+
+    for i in 1..=n {
+        for j in 1..=m {
+            if i == 1 && j == 1 {
+                dp[i][j] = s1[0] == s3[0] && s2[0] == s3[1];
+            } else if i == 1 {
+                dp[i][j] = dp[i][j - 1] && s2[j - 1] == s3[j - 1];
+            } else if j == 1 {
+                dp[i][j] = dp[i - 1][j] && s1[i - 1] == s3[i - 1];
+            } else {
+                dp[i][j] = (dp[i - 1][j] && s1[i - 1] == s3[i - 1]) || (dp[i][j - 1] && s2[j - 1] == s3[j - 1]);
+            }
+        }
+    }
+
+    dp[n][m]
+}
+</code></pre>
+
+          
+          <div class="alert alert-info" role="alert">
+            <strong>stdout</strong>
+            <pre>Wrong Answer</pre>
+          </div>
+           
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+impl Solution {
+    pub fn is_interleave(s1: String, s2: String, s3: String) -> bool {
+        let s1 = s1.as_str();
+        let s2 = s2.as_str();
+        let s3 = s3.as_str();
+
+        let mut s1_idx = 0;
+        let mut s2_idx = 0;
+        let mut s3_idx = 0;
+
+        while s1_idx < s1.len() && s2_idx < s2.len() && s3_idx < s3.len() {
+            if s1[s1_idx] == s3[s3_idx] {
+                s1_idx += 1;
+            }
+            if s2[s2_idx] == s3[s3_idx] {
+                s2_idx += 1;
+            }
+            s3_idx += 1;
+        }
+
+        s1_idx == s1.len() && s2_idx == s2.len() && s3_idx == s3.len()
+    }
+}
+</code></pre>
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 12: Char 19: error: the type `str` cannot be indexed by `usize` (solution.rs) | 12 | if s1[s1_idx] == s3[s3_idx] { | ^^^^^^ string indices are ranges of `usize` | = help: the trait `SliceIndex<str>` is not implemented for `usize` = help: the trait `SliceIndex<[T]>` is implemented for `usize` = note: required for `str` to implement `std::ops::Index<usize>` Line 12: Char 33: error: the type `str` cannot be indexed by `usize` (solution.rs) | 12 | if s1[s1_idx] == s3[s3_idx] { | ^^^^^^ string indices are ranges of `usize` | = help: the trait `SliceIndex<str>` is not implemented for `usize` = help: the trait `SliceIndex<[T]>` is implemented for `usize` = note: required for `str` to implement `std::ops::Index<usize>` Line 15: Char 19: error: the type `str` cannot be indexed by `usize` (solution.rs) | 15 | if s2[s2_idx] == s3[s3_idx] { | ^^^^^^ string indices are ranges of `usize` | = help: the trait `SliceIndex<str>` is not implemented for `usize` = help: the trait `SliceIndex<[T]>` is implemented for `usize` = note: required for `str` to implement `std::ops::Index<usize>` Line 15: Char 33: error: the type `str` cannot be indexed by `usize` (solution.rs) | 15 | if s2[s2_idx] == s3[s3_idx] { | ^^^^^^ string indices are ranges of `usize` | = help: the trait `SliceIndex<str>` is not implemented for `usize` = help: the trait `SliceIndex<[T]>` is implemented for `usize` = note: required for `str` to implement `std::ops::Index<usize>` For more information about this error, try `rustc --explain E0277`. error: could not compile `prog` (bin "prog") due to 4 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

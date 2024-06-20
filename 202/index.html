@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Happy Number</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/1/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/219/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>Write an algorithm to determine if a number <code>n</code> is happy.</p>
+<p>A <strong>happy number</strong> is a number defined by the following process:</p>
+<ul>
+<li>Starting with any positive integer, replace the number by the sum of the squares of its digits.</li>
+<li>Repeat the process until the number equals 1 (where it will stay), or it <strong>loops endlessly in a cycle</strong> which does not include 1.</li>
+<li>Those numbers for which this process <strong>ends in 1</strong> are happy.</li>
+</ul>
+<p>Return <code>true</code> <em>if</em> <code>n</code> <em>is a happy number, and</em> <code>false</code> <em>if not</em>.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> n = 19
+<strong>Output:</strong> true
+<strong>Explanation:</strong>
+12 + 92 = 82
+82 + 22 = 68
+62 + 82 = 100
+12 + 02 + 02 = 1</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> n = 2
+<strong>Output:</strong> false</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>1 &lt;= n &lt;= 231 - 1</code></li>
+</ul>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">pub fn is_happy(n: i32) -> bool {
+    let mut slow = n;
+    let mut fast = n;
+
+    while fast != 1 {
+        slow = square_digits(slow);
+        fast = square_digits(square_digits(fast));
+    }
+
+    slow == 1
+}
+
+fn square_digits(n: i32) -> i32 {
+    let mut result = 0;
+    let mut n = n;
+
+    while n > 0 {
+        let digit = n % 10;
+        result += digit * digit;
+        n /= 10;
+    }
+
+    result
+}
+</code></pre>
+
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 7: Char 16: error: cannot find function `square_digits` in this scope (solution.rs) | 7 | slow = square_digits(slow); | ^^^^^^^^^^^^^ not found in this scope | help: consider using the associated function on `Self` | 7 | slow = Self::square_digits(slow); | ++++++ Line 8: Char 30: error: cannot find function `square_digits` in this scope (solution.rs) | 8 | fast = square_digits(square_digits(fast)); | ^^^^^^^^^^^^^ not found in this scope | help: consider using the associated function on `Self` | 8 | fast = square_digits(Self::square_digits(fast)); | ++++++ Line 8: Char 16: error: cannot find function `square_digits` in this scope (solution.rs) | 8 | fast = square_digits(square_digits(fast)); | ^^^^^^^^^^^^^ not found in this scope | help: consider using the associated function on `Self` | 8 | fast = Self::square_digits(square_digits(fast)); | ++++++ For more information about this error, try `rustc --explain E0425`. error: could not compile `prog` (bin "prog") due to 3 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+impl Solution {
+    pub fn is_happy(n: i32) -> bool {
+        let mut seen = HashSet::new();
+        let mut current = n;
+        while current != 1 {
+            if seen.contains(&current) {
+                return false;
+            }
+            seen.insert(current);
+            current = Self::sum_of_squares(current);
+        }
+        true
+    }
+
+    fn sum_of_squares(n: i32) -> i32 {
+        let mut sum = 0;
+        for digit in n.to_string().chars() {
+            sum += digit.to_digit(10).unwrap().pow(2);
+        }
+        sum
+    }
+}
+</code></pre>
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 3: Char 24: error: failed to resolve: use of undeclared type `HashSet` (solution.rs) | 3 | let mut seen = HashSet::new(); | ^^^^^^^ use of undeclared type `HashSet` | help: consider importing this struct | 27+ use std::collections::HashSet; | Line 20: Char 9: error: mismatched types (solution.rs) | 15 | fn sum_of_squares(n: i32) -> i32 { | --- expected `i32` because of return type ... 20 | sum | ^^^ expected `i32`, found `u32` | help: you can convert a `u32` to an `i32` and panic if the converted value doesn't fit | 20 | sum.try_into().unwrap() | ++++++++++++++++++++ Some errors have detailed explanations: E0308, E0433. For more information about an error, try `rustc --explain E0308`. error: could not compile `prog` (bin "prog") due to 2 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

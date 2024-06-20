@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Course Schedule</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/399/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/210/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>There are a total of <code>numCourses</code> courses you have to take, labeled from <code>0</code> to <code>numCourses - 1</code>. You are given an array <code>prerequisites</code> where <code>prerequisites[i] = [ai, bi]</code> indicates that you <strong>must</strong> take course <code>bi</code> first if you want to take course <code>ai</code>.</p>
+<ul>
+<li>For example, the pair <code>[0, 1]</code>, indicates that to take course <code>0</code> you have to first take course <code>1</code>.</li>
+</ul>
+<p>Return <code>true</code> if you can finish all courses. Otherwise, return <code>false</code>.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> numCourses = 2, prerequisites = [[1,0]]
+<strong>Output:</strong> true
+<strong>Explanation:</strong> There are a total of 2 courses to take. 
+To take course 1 you should have finished course 0. So it is possible.</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> numCourses = 2, prerequisites = [[1,0],[0,1]]
+<strong>Output:</strong> false
+<strong>Explanation:</strong> There are a total of 2 courses to take. 
+To take course 1 you should have finished course 0, and to take course 0 you should also have finished course 1. So it is impossible.</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>1 &lt;= numCourses &lt;= 2000</code></li>
+<li><code>0 &lt;= prerequisites.length &lt;= 5000</code></li>
+<li><code>prerequisites[i].length == 2</code></li>
+<li><code>0 &lt;= ai, bi &lt; numCourses</code></li>
+<li>All the pairs prerequisites[i] are <strong>unique</strong>.</li>
+</ul>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-success"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ✅
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-success"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ✅
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">use std::collections::VecDeque;
+use std::collections::HashMap;
+
+pub struct Solution;
+
+impl Solution {
+    pub fn can_finish(num_courses: i32, prerequisites: Vec<Vec<i32>>) -> bool {
+        let num_courses = num_courses as usize;
+        let mut graph = vec![Vec::new(); num_courses];
+        let mut in_degree = vec![0; num_courses];
+
+        for prerequisite in prerequisites {
+            let (course, prerequisite) = (prerequisite[0] as usize, prerequisite[1] as usize);
+            graph[prerequisite].push(course);
+            in_degree[course] += 1;
+        }
+
+        let mut queue = VecDeque::new();
+        for (i, &in_degree) in in_degree.iter().enumerate().take(num_courses) {
+            if in_degree == 0 {
+                queue.push_back(i);
+            }
+        }
+
+        let mut visited = vec![false; num_courses];
+        while let Some(course) = queue.pop_front() {
+            if visited[course] {
+                continue;
+            }
+            visited[course] = true;
+            for &neighbor in &graph[course] {
+                in_degree[neighbor] -= 1;
+                if in_degree[neighbor] == 0 {
+                    queue.push_back(neighbor);
+                }
+            }
+        }
+
+        visited.into_iter().all(|x| x)
+    }
+}
+</code></pre>
+
+          
+          <div class="alert alert-info" role="alert">
+            <strong>stdout</strong>
+            <pre>Accepted</pre>
+          </div>
+           
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+impl Solution {
+    pub fn can_finish(num_courses: i32, prerequisites: Vec<Vec<i32>>) -> bool {
+        let mut graph = vec![vec![]; num_courses as usize];
+        for edge in prerequisites {
+            graph[edge[1] as usize].push(edge[0] as usize);
+        }
+        let mut visited = vec![false; num_courses as usize];
+        let mut stack = vec![];
+        for i in 0..num_courses {
+            if !visited[i] {
+                if !dfs(i, &mut graph, &mut visited, &mut stack) {
+                    return false;
+                }
+            }
+        }
+        true
+    }
+}
+
+fn dfs(node: usize, graph: &mut Vec<Vec<usize>>, visited: &mut Vec<bool>, stack: &mut Vec<usize>) -> bool {
+    if visited[node] {
+        return false;
+    }
+    visited[node] = true;
+    stack.push(node);
+    for neighbor in graph[node].iter() {
+        if !dfs(*neighbor, graph, visited, stack) {
+            return false;
+        }
+    }
+    stack.pop();
+    true
+}
+</code></pre>
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 10: Char 25: error: the type `[bool]` cannot be indexed by `i32` (solution.rs) | 10 | if !visited[i] { | ^ slice indices are of type `usize` or ranges of `usize` | = help: the trait `SliceIndex<[bool]>` is not implemented for `i32` = help: the trait `SliceIndex<[T]>` is implemented for `usize` = note: required for `Vec<bool>` to implement `std::ops::Index<i32>` Line 11: Char 25: error: mismatched types (solution.rs) | 11 | if !dfs(i, &mut graph, &mut visited, &mut stack) { | --- ^ expected `usize`, found `i32` | | | arguments to this function are incorrect | Line 20: Char 4: note: function defined here (solution.rs) | 20 | fn dfs(node: usize, graph: &mut Vec<Vec<usize>>, visited: &mut Vec<bool>, stack: &mut Vec<usize>) -> bool { | ^^^ ----------- help: you can convert an `i32` to a `usize` and panic if the converted value doesn't fit | 11 | if !dfs(i.try_into().unwrap(), &mut graph, &mut visited, &mut stack) { | ++++++++++++++++++++ Some errors have detailed explanations: E0277, E0308. For more information about an error, try `rustc --explain E0277`. error: could not compile `prog` (bin "prog") due to 2 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Evaluate Division</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/133/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/207/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>You are given an array of variable pairs <code>equations</code> and an array of real numbers <code>values</code>, where <code>equations[i] = [Ai, Bi]</code> and <code>values[i]</code> represent the equation <code>Ai / Bi = values[i]</code>. Each <code>Ai</code> or <code>Bi</code> is a string that represents a single variable.</p>
+<p>You are also given some <code>queries</code>, where <code>queries[j] = [Cj, Dj]</code> represents the <code>jth</code> query where you must find the answer for <code>Cj / Dj = ?</code>.</p>
+<p>Return <em>the answers to all queries</em>. If a single answer cannot be determined, return <code>-1.0</code>.</p>
+<p><strong>Note:</strong> The input is always valid. You may assume that evaluating the queries will not result in division by zero and that there is no contradiction.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> equations = [[ "a ", "b "],[ "b ", "c "]], values = [2.0,3.0], queries = [[ "a ", "c "],[ "b ", "a "],[ "a ", "e "],[ "a ", "a "],[ "x ", "x "]]
+<strong>Output:</strong> [6.00000,0.50000,-1.00000,1.00000,-1.00000]
+<strong>Explanation:</strong> 
+Given: <em>a / b = 2.0</em>, <em>b / c = 3.0</em>
+queries are: <em>a / c = ?</em>, <em>b / a = ?</em>, <em>a / e = ?</em>, <em>a / a = ?</em>, <em>x / x = ?</em>
+return: [6.0, 0.5, -1.0, 1.0, -1.0 ]</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> equations = [[ "a ", "b "],[ "b ", "c "],[ "bc ", "cd "]], values = [1.5,2.5,5.0], queries = [[ "a ", "c "],[ "c ", "b "],[ "bc ", "cd "],[ "cd ", "bc "]]
+<strong>Output:</strong> [3.75000,0.40000,5.00000,0.20000]</p>
+<p><strong>Example 3:</strong></p>
+<p><strong>Input:</strong> equations = [[ "a ", "b "]], values = [0.5], queries = [[ "a ", "b "],[ "b ", "a "],[ "a ", "c "],[ "x ", "y "]]
+<strong>Output:</strong> [0.50000,2.00000,-1.00000,-1.00000]</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>1 &lt;= equations.length &lt;= 20</code></li>
+<li><code>equations[i].length == 2</code></li>
+<li><code>1 &lt;= Ai.length, Bi.length &lt;= 5</code></li>
+<li><code>values.length == equations.length</code></li>
+<li><code>0.0 &lt; values[i] &lt;= 20.0</code></li>
+<li><code>1 &lt;= queries.length &lt;= 20</code></li>
+<li><code>queries[i].length == 2</code></li>
+<li><code>1 &lt;= Cj.length, Dj.length &lt;= 5</code></li>
+<li><code>Ai, Bi, Cj, Dj</code> consist of lower case English letters and digits.</li>
+</ul>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">pub fn calc_equation(equations: Vec<Vec<String>>, values: Vec<f64>, queries: Vec<Vec<String>>) -> Vec<f64> {
+    let mut graph = std::collections::HashMap::new();
+    for (i, (a, b)) in equations.iter().enumerate() {
+        graph.insert((a.clone(), b.clone()), values[i]);
+        graph.insert((b.clone(), a.clone()), 1.0 / values[i]);
+    }
+
+    let mut result = Vec::new();
+    for (a, b) in queries {
+        let mut queue = std::collections::VecDeque::new();
+        queue.push_back((a.clone(), b.clone()));
+        let mut visited = std::collections::HashSet::new();
+        while let Some((node, target)) = queue.pop_front() {
+            if node == target {
+                result.push(graph[&(node, target)]);
+                break;
+            }
+            if visited.contains(&node) {
+                continue;
+            }
+            visited.insert(node.clone());
+            for &(neighbor, weight) in graph.keys() {
+                if neighbor == node {
+                    continue;
+                }
+                let new_weight = weight * graph[&(node, target)];
+                if new_weight != 0.0 {
+                    queue.push_back((neighbor.clone(), target.clone()));
+                    graph.insert((node.clone(), neighbor.clone()), new_weight);
+                    graph.insert((neighbor.clone(), node.clone()), 1.0 / new_weight);
+                }
+            }
+        }
+        if result.is_empty() {
+            result.push(-1.0);
+        }
+    }
+    result
+}
+</code></pre>
+
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 4: Char 13: error: mismatched types (solution.rs) | 4 | for (i, (a, b)) in equations.iter().enumerate() { | ^^^^^^ ---------------------------- this is an iterator with items of type `(usize, &Vec<std::string::String>)` | | | expected `Vec<String>`, found `(_, _)` | = note: expected struct `Vec<std::string::String>` found tuple `(_, _)` Line 10: Char 9: error: mismatched types (solution.rs) | 10 | for (a, b) in queries { | ^^^^^^ ------- this is an iterator with items of type `Vec<std::string::String>` | | | expected `Vec<String>`, found `(_, _)` | = note: expected struct `Vec<std::string::String>` found tuple `(_, _)` For more information about this error, try `rustc --explain E0308`. error: could not compile `prog` (bin "prog") due to 2 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+impl Solution {
+    pub fn calc_equation(equations: Vec<Vec<String>>, values: Vec<f64>, queries: Vec<Vec<String>>) -> Vec<f64> {
+        let mut variables: HashMap<String, f64> = HashMap::new();
+        for (i, equation) in equations.iter().enumerate() {
+            let (var1, var2) = (equation[0].clone(), equation[1].clone());
+            let value = values[i];
+            variables.insert(var1, value);
+            variables.insert(var2, 1.0 / value);
+        }
+        let mut results: Vec<f64> = Vec::new();
+        for query in queries {
+            let (var1, var2) = (query[0].clone(), query[1].clone());
+            if variables.contains_key(&var1) && variables.contains_key(&var2) {
+                let value1 = variables[&var1];
+                let value2 = variables[&var2];
+                results.push(value1 * value2);
+            } else {
+                results.push(-1.0);
+            }
+        }
+        results
+    }
+}
+</code></pre>
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 3: Char 28: error: cannot find type `HashMap` in this scope (solution.rs) | 3 | let mut variables: HashMap<String, f64> = HashMap::new(); | ^^^^^^^ not found in this scope | help: consider importing this struct | 28+ use std::collections::HashMap; | Line 3: Char 51: error: failed to resolve: use of undeclared type `HashMap` (solution.rs) | 3 | let mut variables: HashMap<String, f64> = HashMap::new(); | ^^^^^^^ use of undeclared type `HashMap` | help: consider importing this struct | 28+ use std::collections::HashMap; | Some errors have detailed explanations: E0412, E0433. For more information about an error, try `rustc --explain E0412`. error: could not compile `prog` (bin "prog") due to 2 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

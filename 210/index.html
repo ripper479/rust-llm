@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Course Schedule II</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/207/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/909/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>There are a total of <code>numCourses</code> courses you have to take, labeled from <code>0</code> to <code>numCourses - 1</code>. You are given an array <code>prerequisites</code> where <code>prerequisites[i] = [ai, bi]</code> indicates that you <strong>must</strong> take course <code>bi</code> first if you want to take course <code>ai</code>.</p>
+<ul>
+<li>For example, the pair <code>[0, 1]</code>, indicates that to take course <code>0</code> you have to first take course <code>1</code>.</li>
+</ul>
+<p>Return <em>the ordering of courses you should take to finish all courses</em>. If there are many valid answers, return <strong>any</strong> of them. If it is impossible to finish all courses, return <strong>an empty array</strong>.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> numCourses = 2, prerequisites = [[1,0]]
+<strong>Output:</strong> [0,1]
+<strong>Explanation:</strong> There are a total of 2 courses to take. To take course 1 you should have finished course 0. So the correct course order is [0,1].</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> numCourses = 4, prerequisites = [[1,0],[2,0],[3,1],[3,2]]
+<strong>Output:</strong> [0,2,1,3]
+<strong>Explanation:</strong> There are a total of 4 courses to take. To take course 3 you should have finished both courses 1 and 2. Both courses 1 and 2 should be taken after you finished course 0.
+So one correct course order is [0,1,2,3]. Another correct ordering is [0,2,1,3].</p>
+<p><strong>Example 3:</strong></p>
+<p><strong>Input:</strong> numCourses = 1, prerequisites = []
+<strong>Output:</strong> [0]</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>1 &lt;= numCourses &lt;= 2000</code></li>
+<li><code>0 &lt;= prerequisites.length &lt;= numCourses * (numCourses - 1)</code></li>
+<li><code>prerequisites[i].length == 2</code></li>
+<li><code>0 &lt;= ai, bi &lt; numCourses</code></li>
+<li><code>ai != bi</code></li>
+<li>All the pairs <code>[ai, bi]</code> are <strong>distinct</strong>.</li>
+</ul>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">use std::collections::VecDeque;
+use std::collections::HashMap;
+
+pub fn find_order(num_courses: i32, prerequisites: Vec<Vec<i32>>) -> Vec<i32> {
+    let mut graph = HashMap::new();
+    let mut in_degree = HashMap::new();
+    let mut queue = VecDeque::new();
+
+    for course in 0..num_courses {
+        in_degree.insert(course, 0);
+    }
+
+    for prerequisite in prerequisites {
+        let course = prerequisite[0];
+        let pre_course = prerequisite[1];
+
+        graph.entry(course).or_insert_with(Vec::new).push(pre_course);
+        in_degree.insert(pre_course, in_degree[pre_course] + 1);
+    }
+
+    for (course, in_degree) in in_degree.iter() {
+        if *in_degree == 0 {
+            queue.push_back(*course);
+        }
+    }
+
+    let mut result = Vec::new();
+
+    while let Some(course) = queue.pop_front() {
+        result.push(course);
+
+        if let Some(neighbors) = graph.get(&course) {
+            for neighbor in neighbors {
+                let in_degree = in_degree.get_mut(neighbor).unwrap();
+                *in_degree -= 1;
+
+                if *in_degree == 0 {
+                    queue.push_back(*neighbor);
+                }
+            }
+        }
+    }
+
+    if result.len() == num_courses as usize {
+        result
+    } else {
+        Vec::new()
+    }
+}
+</code></pre>
+
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 18: Char 48: error: mismatched types (solution.rs) | 18 | in_degree.insert(pre_course, in_degree[pre_course] + 1); | ^^^^^^^^^^ expected `&i32`, found `i32` | help: consider borrowing here | 18 | in_degree.insert(pre_course, in_degree[&pre_course] + 1); | + For more information about this error, try `rustc --explain E0308`. error: could not compile `prog` (bin "prog") due to previous error</pre>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+impl Solution {
+    pub fn find_order(num_courses: i32, prerequisites: Vec<Vec<i32>>) -> Vec<i32> {
+        let mut graph = vec![vec![]; num_courses as usize];
+        let mut in_degree = vec![0; num_courses as usize];
+        let mut queue = Vec::new();
+        let mut result = Vec::new();
+
+        for edge in prerequisites {
+            let (course, prereq) = (edge[0] as usize, edge[1] as usize);
+            graph[prereq].push(course);
+            in_degree[course] += 1;
+        }
+
+        for i in 0..num_courses {
+            if in_degree[i] == 0 {
+                queue.push(i);
+            }
+        }
+
+        while !queue.is_empty() {
+            let course = queue.pop().unwrap();
+            result.push(course);
+            for neighbor in graph[course].iter() {
+                in_degree[*neighbor] -= 1;
+                if in_degree[*neighbor] == 0 {
+                    queue.push(*neighbor);
+                }
+            }
+        }
+
+        if result.len() == num_courses as usize {
+            result
+        } else {
+            vec![]
+        }
+    }
+}
+</code></pre>
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 15: Char 26: error: the type `[{integer}]` cannot be indexed by `i32` (solution.rs) | 15 | if in_degree[i] == 0 { | ^ slice indices are of type `usize` or ranges of `usize` | = help: the trait `SliceIndex<[{integer}]>` is not implemented for `i32` = help: the trait `SliceIndex<[T]>` is implemented for `usize` = note: required for `Vec<{integer}>` to implement `std::ops::Index<i32>` Line 23: Char 35: error: the type `[Vec<usize>]` cannot be indexed by `i32` (solution.rs) | 23 | for neighbor in graph[course].iter() { | ^^^^^^ slice indices are of type `usize` or ranges of `usize` | = help: the trait `SliceIndex<[Vec<usize>]>` is not implemented for `i32` = help: the trait `SliceIndex<[T]>` is implemented for `usize` = note: required for `Vec<Vec<usize>>` to implement `std::ops::Index<i32>` For more information about this error, try `rustc --explain E0277`. error: could not compile `prog` (bin "prog") due to 2 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

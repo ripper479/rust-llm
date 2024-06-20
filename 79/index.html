@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Word Search</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/22/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/108/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>Given an <code>m x n</code> grid of characters <code>board</code> and a string <code>word</code>, return <code>true</code> <em>if</em> <code>word</code> <em>exists in the grid</em>.</p>
+<p>The word can be constructed from letters of sequentially adjacent cells, where adjacent cells are horizontally or vertically neighboring. The same letter cell may not be used more than once.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> board = [[ "A ", "B ", "C ", "E "],[ "S ", "F ", "C ", "S "],[ "A ", "D ", "E ", "E "]], word =  "ABCCED "
+<strong>Output:</strong> true</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> board = [[ "A ", "B ", "C ", "E "],[ "S ", "F ", "C ", "S "],[ "A ", "D ", "E ", "E "]], word =  "SEE "
+<strong>Output:</strong> true</p>
+<p><strong>Example 3:</strong></p>
+<p><strong>Input:</strong> board = [[ "A ", "B ", "C ", "E "],[ "S ", "F ", "C ", "S "],[ "A ", "D ", "E ", "E "]], word =  "ABCB "
+<strong>Output:</strong> false</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>m == board.length</code></li>
+<li><code>n = board[i].length</code></li>
+<li><code>1 &lt;= m, n &lt;= 6</code></li>
+<li><code>1 &lt;= word.length &lt;= 15</code></li>
+<li><code>board</code> and <code>word</code> consists of only lowercase and uppercase English letters.</li>
+</ul>
+<p><strong>Follow up:</strong> Could you use search pruning to make your solution faster with a larger <code>board</code>?</p>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">pub fn exist(board: Vec<Vec<char>>, word: String) -> bool {
+    let m = board.len();
+    let n = board[0].len();
+    let word_chars: Vec<char> = word.chars().collect();
+    let word_len = word_chars.len();
+
+    let mut visited = vec![vec![false; n]; m];
+
+    for i in 0..m {
+        for j in 0..n {
+            if board[i][j] == word_chars[0] {
+                if dfs(board, i, j, &word_chars, 0, &mut visited) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    false
+}
+
+fn dfs(board: &Vec<Vec<char>>, i: usize, j: usize, word: &Vec<char>, index: usize, visited: &mut Vec<Vec<bool>>) -> bool {
+    let m = board.len();
+    let n = board[0].len();
+
+    if index == word.len() {
+        return true;
+    }
+
+    if i < m && j < n && !visited[i][j] && board[i][j] == word[index] {
+        visited[i][j] = true;
+
+        if dfs(board, i + 1, j, word, index + 1, visited) ||
+            dfs(board, i - 1, j, word, index + 1, visited) ||
+            dfs(board, i, j + 1, word, index + 1, visited) ||
+            dfs(board, i, j - 1, word, index + 1, visited)
+        {
+            return true;
+        }
+
+        visited[i][j] = false;
+    }
+
+    false
+}
+</code></pre>
+
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 13: Char 30: error: mismatched types (solution.rs) | 13 | if Self::dfs(board, i, j, &word_chars, 0, &mut visited) { | --------- ^^^^^ expected `&Vec<Vec<char>>`, found `Vec<Vec<char>>` | | | arguments to this function are incorrect | = note: expected reference `&Vec<Vec<char>>` found struct `Vec<Vec<char>>` Line 23: Char 4: note: associated function defined here (solution.rs) | 23 | fn dfs(board: &Vec<Vec<char>>, i: usize, j: usize, word: &Vec<char>, index: usize, visited: &mut Vec<Vec<bool>>) -> bool { | ^^^ ---------------------- help: consider borrowing here | 13 | if Self::dfs(&board, i, j, &word_chars, 0, &mut visited) { | + For more information about this error, try `rustc --explain E0308`. error: could not compile `prog` (bin "prog") due to previous error</pre>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+impl Solution {
+    pub fn exist(board: Vec<Vec<char>>, word: String) -> bool {
+        let m = board.len();
+        let n = board[0].len();
+        let word_len = word.len();
+
+        // Initialize a 2D array to keep track of visited cells
+        let mut visited = vec![vec![false; n]; m];
+
+        // Iterate over each row and column of the board
+        for i in 0..m {
+            for j in 0..n {
+                // If the current cell contains the first letter of the word,
+                // recursively search for the rest of the word in the same row
+                if board[i][j] == word[0] {
+                    if self.exist_helper(board, i, j, word, 1, &mut visited) {
+                        return true;
+                    }
+                }
+
+                // If the current cell contains the first letter of the word,
+                // recursively search for the rest of the word in the same column
+                if board[i][j] == word[0] {
+                    if self.exist_helper(board, i, j, word, 1, &mut visited) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        false
+    }
+
+    // Helper function to recursively search for the word in the board
+    fn exist_helper(
+        &self,
+        board: &Vec<Vec<char>>,
+        i: usize,
+        j: usize,
+        word: &str,
+        index: usize,
+        visited: &mut Vec<Vec<bool>>,
+    ) -> bool {
+        // If we have reached the end of the word, return true
+        if index == word.len() {
+            return true;
+        }
+
+        // If the current cell is out of bounds or has already been visited, return false
+        if i < 0 || i >= board.len() || j < 0 || j >= board[0].len() || visited[i][j] {
+            return false;
+        }
+
+        // If</code></pre>
+          
+          <div class="alert alert-info" role="alert">
+            <strong>stdout</strong>
+            <pre>Context-Length Exceeded</pre>
+          </div>
+           
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

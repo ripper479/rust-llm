@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Sort List</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/108/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/427/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>Given the <code>head</code> of a linked list, return <em>the list after sorting it in <strong>ascending order</strong></em>.</p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> head = [4,2,1,3]
+<strong>Output:</strong> [1,2,3,4]</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> head = [-1,5,3,4,0]
+<strong>Output:</strong> [-1,0,3,4,5]</p>
+<p><strong>Example 3:</strong></p>
+<p><strong>Input:</strong> head = []
+<strong>Output:</strong> []</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li>The number of nodes in the list is in the range <code>[0, 5 * 104]</code>.</li>
+<li><code>-105 &lt;= Node.val &lt;= 105</code></li>
+</ul>
+<p><strong>Follow up:</strong> Can you sort the linked list in <code>O(n logn)</code> time and <code>O(1)</code> memory (i.e. constant space)?</p>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">use std::cmp::Ordering;
+use std::ptr::null_mut;
+
+#[derive(PartialEq, Eq, Clone, Debug)]
+pub struct ListNode {
+    pub val: i32,
+    pub next: *mut ListNode,
+}
+
+impl ListNode {
+    #[inline]
+    fn new(val: i32) -> Self {
+        ListNode {
+            next: null_mut(),
+            val,
+        }
+    }
+}
+
+pub struct Solution;
+
+impl Solution {
+    pub fn sort_list(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+        let mut head = head;
+        let mut len = 0;
+        let mut curr = head.as_deref_mut();
+        while curr.is_some() {
+            curr = curr.unwrap().next.as_deref_mut();
+            len += 1;
+        }
+
+        let mut nodes = Vec::with_capacity(len);
+        curr = head.as_deref_mut();
+        while curr.is_some() {
+            nodes.push(curr.unwrap().val);
+            curr = curr.unwrap().next.as_deref_mut();
+        }
+
+        nodes.sort_unstable();
+
+        let mut head = head;
+        let mut curr = head.as_deref_mut();
+        for val in nodes {
+            let mut new_node = Box::new(ListNode::new(val));
+            let new_node_ptr = &mut *new_node;
+            if curr.is_none() {
+                head = Some(new_node);
+                curr = head.as_deref_mut();
+            } else {
+                let next_ptr = curr.unwrap().next.as_deref_mut();
+                curr.unwrap().next = Some(new_node);
+                curr = next_ptr;
+            }
+        }
+
+        head
+    }
+}
+</code></pre>
+
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 33: Char 20: error: use of moved value: `curr` (solution.rs) | 23 | let mut curr = head.as_deref_mut(); | -------- move occurs because `curr` has type `Option<&mut list_node::ListNode>`, which does not implement the `Copy` trait ... 31 | while curr.is_some() { | -------------------- inside of this loop 32 | nodes.push(curr.unwrap().val); | ---- -------- `curr` moved due to this method call | | | help: consider calling `.as_ref()` or `.as_mut()` to borrow the type's contents 33 | curr = curr.unwrap().next.as_deref_mut(); | ^^^^ value used here after move Line 48: Char 17: error: use of moved value: `curr` (solution.rs) | 39 | let mut curr = head.as_deref_mut(); | -------- move occurs because `curr` has type `Option<&mut list_node::ListNode>`, which does not implement the `Copy` trait 40 | for val in nodes { | ---------------- inside of this loop ... 47 | let next_ptr = curr.unwrap().next.as_deref_mut(); | ---- -------- `curr` moved due to this method call | | | help: consider calling `.as_ref()` or `.as_mut()` to borrow the type's contents 48 | curr.unwrap().next = Some(new_node); | ^^^^ value used here after move | Line 931: Char 25: note: `Option::<T>::unwrap` takes ownership of the receiver `self`, which moves `curr` (solution.rs) For more information about this error, try `rustc --explain E0382`. error: could not compile `prog` (bin "prog") due to 2 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+use std::option::Option;
+
+#[derive(PartialEq, Eq, Clone, Debug)]
+pub struct ListNode {
+    pub val: i32,
+    pub next: Option<Box<ListNode>>,
+}
+
+impl ListNode {
+    #[inline]
+    fn new(val: i32) -> Self {
+        ListNode {
+            next: None,
+            val,
+        }
+    }
+}
+
+impl Solution {
+    pub fn sort_list(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+        let mut head = head;
+        let mut sorted_head = None;
+
+        while let Some(node) = head {
+            head = node.next;
+            sorted_head = Some(node);
+        }
+
+        sorted_head
+    }
+}
+</code></pre>
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 25: Char 32: error: use of partially moved value: `node` (solution.rs) | 24 | head = node.next; | --------- value partially moved here 25 | sorted_head = Some(node); | ^^^^ value used here after partial move | = note: partial move occurs because `node.next` has type `Option<Box<list_node::ListNode>>`, which does not implement the `Copy` trait For more information about this error, try `rustc --explain E0382`. error: could not compile `prog` (bin "prog") due to previous error</pre>
+          </div>
+          
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

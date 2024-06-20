@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Flatten Binary Tree to Linked List</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/117/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/112/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>Given the <code>root</code> of a binary tree, flatten the tree into a "linked list ":</p>
+<ul>
+<li>The "linked list " should use the same <code>TreeNode</code> class where the <code>right</code> child pointer points to the next node in the list and the <code>left</code> child pointer is always <code>null</code>.</li>
+<li>The "linked list " should be in the same order as a <a href="https://en.wikipedia.org/wiki/Tree_traversal#Pre-order,_NLR"><strong>pre-order</strong> <strong>traversal</strong></a> of the binary tree.</li>
+</ul>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> root = [1,2,5,3,4,null,6]
+<strong>Output:</strong> [1,null,2,null,3,null,4,null,5,null,6]</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> root = []
+<strong>Output:</strong> []</p>
+<p><strong>Example 3:</strong></p>
+<p><strong>Input:</strong> root = [0]
+<strong>Output:</strong> [0]</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li>The number of nodes in the tree is in the range <code>[0, 2000]</code>.</li>
+<li><code>-100 &lt;= Node.val &lt;= 100</code></li>
+</ul>
+<p><strong>Follow up:</strong> Can you flatten the tree in-place (with <code>O(1)</code> extra space)?</p>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">use std::rc::Rc;
+use std::cell::RefCell;
+
+pub struct Solution;
+
+impl Solution {
+    pub fn flatten(root: &mut Option<Rc<RefCell<TreeNode>>>) {
+        let mut stack = vec![root];
+        let mut prev = None;
+
+        while let Some(node) = stack.pop() {
+            let node = node.as_ref().unwrap();
+            if let Some(right) = node.right.take() {
+                stack.push(node.left.take());
+                stack.push(Some(right));
+            } else {
+                if let Some(prev) = prev {
+                    prev.right = Some(node.left.take());
+                    prev.right.as_mut().unwrap().left = None;
+                }
+                prev = Some(node);
+            }
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct TreeNode {
+    pub val: i32,
+    pub left: Option<Rc<RefCell<TreeNode>>>,
+    pub right: Option<Rc<RefCell<TreeNode>>>,
+}
+
+impl TreeNode {
+    #[inline]
+    pub fn new(val: i32) -> Self {
+        TreeNode {
+            val,
+            left: None,
+            right: None,
+        }
+    }
+}
+</code></pre>
+
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 28: Char 39: error: no field `right` on type `&Rc<RefCell<tree_node::TreeNode>>` (solution.rs) | 28 | if let Some(right) = node.right.take() { | ^^^^^ unknown field Line 29: Char 33: error: no field `left` on type `&Rc<RefCell<tree_node::TreeNode>>` (solution.rs) | 29 | stack.push(node.left.take()); | ^^^^ unknown field Line 30: Char 28: error: mismatched types (solution.rs) | 30 | stack.push(Some(right)); | ---- ^^^^^^^^^^^ expected `&mut Option<Rc<RefCell<TreeNode>>>`, found `Option<_>` | | | arguments to this method are incorrect | = note: expected mutable reference `&mut Option<Rc<RefCell<tree_node::TreeNode>>>` found enum `Option<_>` Line 1877: Char 12: note: method defined here (solution.rs) help: consider mutably borrowing here | 30 | stack.push(&mut Some(right)); | ++++ Line 33: Char 44: error: no field `left` on type `&Rc<RefCell<tree_node::TreeNode>>` (solution.rs) | 33 | prev.right = Some(node.left.take()); | ^^^^ unknown field Some errors have detailed explanations: E0308, E0609. For more information about an error, try `rustc --explain E0308`. error: could not compile `prog` (bin "prog") due to 4 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+use std::rc::Rc;
+use std::cell::RefCell;
+
+impl Solution {
+    pub fn flatten(root: &mut Option<Rc<RefCell<TreeNode>>>) {
+        if let Some(node) = root {
+            let mut current = node;
+            let mut next = current.borrow_mut().right.take();
+            while let Some(mut next) = next {
+                let mut next_next = next.borrow_mut().right.take();
+                current.borrow_mut().right = Some(next);
+                current = next;
+                next = next_next;
+            }
+            current.borrow_mut().right = None;
+        }
+    }
+}
+</code></pre>
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 29: Char 27: error: mismatched types (solution.rs) | 24 | let mut current = node; | ---- expected due to this value ... 29 | current = next; | ^^^^ expected `&mut Rc<RefCell<TreeNode>>`, found `Rc<RefCell<TreeNode>>` | = note: expected mutable reference `&mut Rc<RefCell<tree_node::TreeNode>>` found struct `Rc<RefCell<tree_node::TreeNode>>` help: consider dereferencing here to assign to the mutably borrowed value | 29 | *current = next; | + Line 30: Char 24: error: mismatched types (solution.rs) | 26 | while let Some(mut next) = next { | -------- expected due to the type of this binding ... 30 | next = next_next; | ^^^^^^^^^ expected `Rc<RefCell<TreeNode>>`, found `Option<Rc<RefCell<TreeNode>>>` | = note: expected struct `Rc<_>` found enum `Option<Rc<_>>` For more information about this error, try `rustc --explain E0308`. error: could not compile `prog` (bin "prog") due to 2 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

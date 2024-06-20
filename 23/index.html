@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-tuning CodeLlama-7B for Rust Code Generation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.3/zephyr/bootstrap.min.css"
+      integrity="sha512-CWXb9sx63+REyEBV/cte+dE1hSsYpJifb57KkqAXjsN3gZQt6phZt7e5RhgZrUbaNfCdtdpcqDZtuTEB+D3q2Q=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/fortran.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/cpp.min.js"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>Merge k Sorted Lists</h2>
+      <div>
+        <a href="/rust-llm/" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="/rust-llm/427/"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="/rust-llm/53/"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          <p>You are given an array of <code>k</code> linked-lists <code>lists</code>, each linked-list is sorted in ascending order.</p>
+<p><em>Merge all the linked-lists into one sorted linked-list and return it.</em></p>
+<p><strong>Example 1:</strong></p>
+<p><strong>Input:</strong> lists = [[1,4,5],[1,3,4],[2,6]]
+<strong>Output:</strong> [1,1,2,3,4,4,5,6]
+<strong>Explanation:</strong> The linked-lists are:
+[
+  1-&gt;4-&gt;5,
+  1-&gt;3-&gt;4,
+  2-&gt;6
+]
+merging them into one sorted list:
+1-&gt;1-&gt;2-&gt;3-&gt;4-&gt;4-&gt;5-&gt;6</p>
+<p><strong>Example 2:</strong></p>
+<p><strong>Input:</strong> lists = []
+<strong>Output:</strong> []</p>
+<p><strong>Example 3:</strong></p>
+<p><strong>Input:</strong> lists = [[]]
+<strong>Output:</strong> []</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><code>k == lists.length</code></li>
+<li><code>0 &lt;= k &lt;= 104</code></li>
+<li><code>0 &lt;= lists[i].length &lt;= 500</code></li>
+<li><code>-104 &lt;= lists[i][j] &lt;= 104</code></li>
+<li><code>lists[i]</code> is sorted in <strong>ascending order</strong>.</li>
+<li>The sum of <code>lists[i].length</code> will not exceed <code>104</code>.</li>
+</ul>
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">use std::collections::BinaryHeap;
+use std::cmp::Reverse;
+
+pub struct Solution;
+
+impl Solution {
+    pub fn merge_k_lists(lists: Vec<Option<Box<ListNode>>>) -> Option<Box<ListNode>> {
+        let mut heap = BinaryHeap::new();
+        for list in lists {
+            if let Some(node) = list {
+                heap.push(Reverse(node));
+            }
+        }
+
+        let mut head = None;
+        let mut tail = &mut head;
+
+        while let Some(Reverse(node)) = heap.pop() {
+            let node = node.into_inner();
+            *tail = Some(node);
+            tail = &mut node.next;
+
+            if let Some(next) = node.next {
+                heap.push(Reverse(next));
+            }
+        }
+
+        head
+    }
+}
+</code></pre>
+
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 24: Char 22: error: the trait bound `list_node::ListNode: Ord` is not satisfied (solution.rs) | 24 | heap.push(Reverse(node)); | ^^^^ the trait `Ord` is not implemented for `list_node::ListNode` | = help: the trait `Ord` is implemented for `Reverse<T>` = note: required for `Box<list_node::ListNode>` to implement `Ord` = note: 1 redundant requirement hidden = note: required for `Reverse<Box<list_node::ListNode>>` to implement `Ord` Line 607: Char 5: note: required by a bound in `BinaryHeap::<T, A>::push` (solution.rs) Line 21: Char 24: error: the trait bound `list_node::ListNode: Ord` is not satisfied (solution.rs) | 21 | let mut heap = BinaryHeap::new(); | ^^^^^^^^^^^^^^^ the trait `Ord` is not implemented for `list_node::ListNode` | = help: the trait `Ord` is implemented for `Reverse<T>` = note: required for `Box<list_node::ListNode>` to implement `Ord` = note: 1 redundant requirement hidden = note: required for `Reverse<Box<list_node::ListNode>>` to implement `Ord` Line 437: Char 5: note: required by a bound in `BinaryHeap::<T>::new` (solution.rs) Line 31: Char 46: error: the method `pop` exists for struct `BinaryHeap<Reverse<Box<ListNode>>>`, but its trait bounds were not satisfied (solution.rs) | 31 | while let Some(Reverse(node)) = heap.pop() { | ^^^ method cannot be called on `BinaryHeap<Reverse<Box<ListNode>>>` due to unsatisfied trait bounds --> /rustc/a28077b28a02b92985b3a3faecf92813155f1ea1/library/core/src/cmp.rs:610:1 | = note: doesn't satisfy `Reverse<Box<list_node::ListNode>>: Ord` | = note: doesn't satisfy `Reverse<Box<list_node::ListNode>>: PartialOrd` | = note: the following trait bounds were not satisfied: `Reverse<Box<list_node::ListNode>>: Ord` `Reverse<Box<list_node::ListNode>>: PartialOrd` which is required by `Reverse<Box<list_node::ListNode>>: Ord` Line 37: Char 22: error: the method `push` exists for struct `BinaryHeap<Reverse<Box<ListNode>>>`, but its trait bounds were not satisfied (solution.rs) | 37 | heap.push(Reverse(next)); | ^^^^ method cannot be called on `BinaryHeap<Reverse<Box<ListNode>>>` due to unsatisfied trait bounds --> /rustc/a28077b28a02b92985b3a3faecf92813155f1ea1/library/core/src/cmp.rs:610:1 | = note: doesn't satisfy `Reverse<Box<list_node::ListNode>>: Ord` | = note: doesn't satisfy `Reverse<Box<list_node::ListNode>>: PartialOrd` | = note: the following trait bounds were not satisfied: `Reverse<Box<list_node::ListNode>>: Ord` `Reverse<Box<list_node::ListNode>>: PartialOrd` which is required by `Reverse<Box<list_node::ListNode>>: Ord` Some errors have detailed explanations: E0277, E0599. For more information about an error, try `rustc --explain E0277`. error: could not compile `prog` (bin "prog") due to 4 previous errors</pre>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card border-danger"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    ❌
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">
+def merge_k_lists(lists):
+    if not lists:
+        return []
+    return sorted(sum(lists, []))
+</code></pre>
+           
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>Line 1: Char 5: error: expected one of `!` or `::`, found `merge_k_lists` (solution.rs) | 1 | def merge_k_lists(lists): | --- ^^^^^^^^^^^^^ expected one of `!` or `::` | | | help: write `fn` instead of `def` to declare a function error: could not compile `prog` (bin "prog") due to previous error</pre>
+          </div>
+          
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+
+  </body>
+</html>

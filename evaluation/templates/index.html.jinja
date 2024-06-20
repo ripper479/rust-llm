@@ -1,0 +1,68 @@
+{% extends "base.html.jinja" %} {% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col text-center mx-3 mt-3">
+      <h1 class="h4">Fine-tuning CodeLlama-7b-Instruct for Rust Code Generation using PEFT</h1>
+      <p class="font-emoji"><b> ❌ -> Not Compiled / Wrong Answer &emsp; ✅ -> Compiled / Correct Answer &emsp; ⚠️ -> Runtime Error &emsp;
+       ⏳ -> Time Limit Exceeded</b></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col table-responsive">
+      <table class="table table-striped table-sm">
+        <col />
+        <colgroup span="3"></colgroup>
+        <colgroup span="3"></colgroup>
+        <tr>
+          <td colspan="2"></td>
+          <th colspan="3" scope="colgroup">Rust LLM</th>
+          <th colspan="3" scope="colgroup">CodeLlama-7B</th>
+        </tr>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th>Compiled</th>
+          <th>Verdict</th>
+          <th>Compiled</th>
+          <th>Verdict</th>
+        </tr>
+        <tbody class="table-group-divider">
+          {% for id in finetuned_codes %}
+          <tr>
+            <td>{{ id }}</td>
+            <td>
+              <a href="{{url_for('result', problem_id=id)}}">
+                {{ leetcode_data[id]["title"] }}
+              </a>
+            </td>
+            <td class="font-emoji">
+              {{ "✅" if finetuned_evals[id]["compiled"] == "true" else "❌" }}
+            </td>
+            <td class="font-emoji">
+              {{ '✅' if finetuned_evals[id]["verdict"] == "Accepted" else "⚠️"
+              if finetuned_evals[id]["verdict"] == "Runtime Error" else "⏳"
+              if finetuned_evals[id]["verdict"] == "Time Limit Exceeded" else "❌"}}
+            </td>
+            <td class="font-emoji">
+              {{ "✅" if baseline_evals[id]["compiled"] == "true" else "❌"}}
+            </td>
+            <td class="font-emoji">
+              {{ '✅' if baseline_evals[id]["verdict"] == "Accepted" else "⚠️"
+              if baseline_evals[id]["verdict"] == "Runtime Error" else "⏳"
+              if baseline_evals[id]["verdict"] == "Time Limit Exceeded" else "❌"}}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<style>
+  .font-emoji {
+    font-family: emoji;
+  }
+</style>
+
+{% endblock %}

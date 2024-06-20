@@ -1,0 +1,199 @@
+{% extends "base.html.jinja" %} {% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col d-flex justify-content-between align-items-center">
+      <h2>{{ leetcode_problem["title"] }}</h2>
+      <div>
+        <a href="{{ url_for('index') }}" class="btn btn-outline-primary me-2">
+          🏠
+        </a>
+        <a
+          href="{{ url_for('result', problem_id=prev_id) }}"
+          class="btn btn-outline-secondary me-2">
+          ⬅️
+        </a>
+        <a
+          href="{{ url_for('result', problem_id=next_id) }}"
+          class="btn btn-outline-secondary">
+          ➡️
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="leetcode-problem-content card">
+        <div class="card-body">
+          {{ leetcode_problem["content"] | markdown | safe }}
+        </div>
+      </div>
+      <style>
+        .leetcode-problem-content {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="our-model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#our-model-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="our-model-tab-pane"
+            aria-selected="true">
+            🦾 Rust LLM
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="our-model-tab-pane"
+          role="tabpanel"
+          aria-labelledby="our-model-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card {{ 'border-success' if finetuned_eval['compiled'] =="true" else 'border-danger' }}"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    {{ '✅' if finetuned_eval['compiled'] == "true" else '❌' }}
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card {{ 'border-success' if finetuned_eval['verdict'] == "Accepted" else 'border-danger' }}"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    {{ '✅' if finetuned_eval["verdict"] == "Accepted" else "⚠️"
+              if finetuned_eval["verdict"] == "Runtime Error" else "⏳"
+              if finetuned_eval["verdict"] == "Time Limit Exceeded" else "❌" }}
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">{{ finetuned_code[5:] }}</code></pre>
+
+          {% if (finetuned_eval["stderr"] == "Accepted" or finetuned_eval["stderr"] == "Wrong Answer" 
+          or finetuned_eval["stderr"] == "Time Limit Exceeded" or finetuned_eval["stderr"] == "No Rust Compiler" 
+          or finetuned_eval["stderr"] == "Context-Length Exceeded")%}
+          <div class="alert alert-info" role="alert">
+            <strong>stdout</strong>
+            <pre>{{ finetuned_eval["stderr"] }}</pre>
+          </div>
+          {% endif %} {% if not(finetuned_eval["stderr"] == "Accepted" or finetuned_eval["stderr"] == "Wrong Answer" 
+          or finetuned_eval["stderr"] == "Time Limit Exceeded" or finetuned_eval["stderr"] == "No Rust Compiler" 
+          or finetuned_eval["stderr"] == "Context-Length Exceeded") %}
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>{{ finetuned_eval["stderr"] }}</pre>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <ul class="nav nav-underline mb-2" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="codellama-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#codellama-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="codellama-tab-pane"
+            aria-selected="true">
+            🦙 CodeLlama-7B
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="codellama-tab-pane"
+          role="tabpanel"
+          aria-labelledby="codellama-tab"
+          tabindex="0">
+          <div class="row mb-2">
+            <div class="col">
+              <div
+                class="card {{ 'border-success' if baseline_eval['compiled'] == "true" else 'border-danger' }}"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    {{ '✅' if baseline_eval['compiled'] == "true" else '❌' }}
+                  </span>
+                  <strong>Compiled</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div
+                class="card {{ 'border-success' if baseline_eval['verdict'] == "Accepted" else 'border-danger' }}"
+                style="border-width: 2px">
+                <div class="card-body">
+                  <span class="font-emoji">
+                    {{ '✅' if baseline_eval["verdict"] == "Accepted" else "⚠️"
+              if baseline_eval["verdict"] == "Runtime Error" else "⏳"
+              if baseline_eval["verdict"] == "Time Limit Exceeded" else "❌" }}
+                  </span>
+                  <strong>Verdict</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code class="language-rust model-code">{{ basemodel_code }}</code></pre>
+          {% if (baseline_eval["stderr"] == "Accepted" or baseline_eval["stderr"] == "Wrong Answer" 
+          or baseline_eval["stderr"] == "Time Limit Exceeded" or baseline_eval["stderr"] == "No Rust Compiler" 
+          or baseline_eval["stderr"] == "Context-Length Exceeded") %}
+          <div class="alert alert-info" role="alert">
+            <strong>stdout</strong>
+            <pre>{{ baseline_eval["stderr"] }}</pre>
+          </div>
+          {% endif %} {% if not(baseline_eval["stderr"] == "Accepted" or baseline_eval["stderr"] == "Wrong Answer" 
+          or baseline_eval["stderr"] == "Time Limit Exceeded" or baseline_eval["stderr"] == "No Rust Compiler" 
+          or baseline_eval["stderr"] == "Context-Length Exceeded") %}
+          <div class="alert alert-danger" role="alert">
+            <strong>stderr</strong>
+            <pre>{{ baseline_eval["stderr"] }}</pre>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      <style>
+        .model-code {
+          max-height: 600px;
+          overflow-y: auto;
+        }
+
+        .font-emoji {
+          font-family: emoji;
+        }
+      </style>
+    </div>
+  </div>
+</div>
+<script>
+  hljs.addPlugin(new CopyButtonPlugin());
+  hljs.highlightAll();
+</script>
+{% endblock %}
